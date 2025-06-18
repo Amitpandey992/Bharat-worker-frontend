@@ -14,7 +14,6 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
-
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -45,8 +44,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         localStorage.setItem(
           Constants.LocalStorageSessionKey,
-          JSON.stringify(userData)
+          JSON.stringify(userData.token)
         );
+        localStorage.setItem("user", JSON.stringify(userData.user));
         setUser(userData);
         return true;
       }
@@ -57,16 +57,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-
   const logout = () => {
     localStorage.removeItem(Constants.LocalStorageSessionKey);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, login, logout }}
-    >
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
