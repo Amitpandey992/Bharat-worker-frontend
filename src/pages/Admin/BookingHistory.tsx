@@ -33,7 +33,6 @@ const BookingHistory = () => {
             setCustomer(response?.data);
         }
     }
-
     useEffect(() => {
         fetchCustomer();
     }, []);

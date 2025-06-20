@@ -113,6 +113,25 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
         }
     }
 
+    async function createNewService(
+        name: string,
+        description: string,
+        basePrice: number
+    ) {
+        try {
+            setIsLoading(true);
+            const response = await CustomerService.createNewService(
+                name,
+                description,
+                basePrice
+            );
+            
+        } catch (error) {
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return (
         <CustomerContext.Provider
             value={{

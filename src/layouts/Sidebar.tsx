@@ -12,7 +12,9 @@ import {
     X,
     ChevronDown,
     // BarChart,
-    // UserCog,
+    // Use
+    Circle,
+    FilePlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -25,6 +27,7 @@ interface SubMenuItem {
     name: string;
     href: string;
     icon: JSX.Element;
+    role: string;
 }
 
 interface MenuItem {
@@ -32,11 +35,12 @@ interface MenuItem {
     href?: string;
     icon: JSX.Element;
     subItems?: SubMenuItem[];
+    role: string;
 }
 
 const Sidebar = ({ onClose }: SidebarProps) => {
     const location = useLocation();
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
     const navigate = useNavigate();
     const [openMenus, setOpenMenus] = useState<string[]>([]);
 
@@ -45,19 +49,28 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             name: "User Management",
             href: "/user",
             icon: <Users className="h-5 w-5" />,
+            role: "admin",
             subItems: [
                 {
                     name: "Customer",
                     href: "/customerlist",
                     icon: <Users className="h-4 w-4" />,
+                    role: "admin",
                 },
 
                 {
                     name: "Partner",
                     href: "/partnerlistdata",
                     icon: <Users className="h-4 w-4" />,
+                    role: "admin",
                 },
             ],
+        },
+        {
+            name: "Create service",
+            href: "/create-service",
+            icon: <FilePlus className="h-4 w-4" />,
+            role: "customer",
         },
     ];
 
@@ -94,6 +107,10 @@ const Sidebar = ({ onClose }: SidebarProps) => {
         return subPaths.some((sub) => location.pathname.startsWith(sub.href));
     };
 
+    const filteredNavigation = navigation.filter(
+        (item, index) => item.role === user?.role
+    );
+
     return (
         <div className="flex h-full flex-col overflow-y-auto border-r bg-black shadow-lg">
             <div className="flex items-center justify-between px-6 py-4">
@@ -118,7 +135,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             </div>
 
             <div className="mt-6 space-y-1 px-3">
-                {navigation.map((item) => (
+                {filteredNavigation.map((item) => (
                     <div key={item.name}>
                         {item.subItems ? (
                             <div className="space-y-1">
