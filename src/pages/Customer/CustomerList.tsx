@@ -18,7 +18,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { UserPlus, Edit, MoreHorizontal, Settings2, X, View, ViewIcon, LucideView, Info } from "lucide-react";
+import { UserPlus, Edit, MoreHorizontal, Settings2, X, Info } from "lucide-react";
 import { CustomerList } from "@/shared/types";
 import { useCustomer } from "@/context/CustomerContext";
 import { useToast } from "@/components/ui/use-toast";
