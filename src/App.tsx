@@ -5,19 +5,27 @@ import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import BookingHistory from "@/pages/Customer/BookingHistory";
-import CustomerListdata from "@/pages/Customer/CustomerList";
+import BookingHistory from "@/pages/Admin/BookingHistory";
+import CustomerListdata from "@/pages/Admin/CustomerList";
 import DocumentUpload from "@/pages/Partner/DocumentUpdate";
 import { useAuth } from "@/context/AuthContext";
 import CreateService from "@/pages/Customer/CreateService";
 function App() {
-    const { user } = useAuth();
+    const { user, token } = useAuth();
 
     return (
         <BrowserRouter>
             <Routes>
-                <Route path="/login" element={<Login />} />
-
+                <Route
+                    path="/login"
+                    element={
+                        token ? (
+                            <Navigate to="/customerlist" replace />
+                        ) : (
+                            <Login />
+                        )
+                    }
+                />
                 <Route
                     element={
                         <ProtectedRoute>
