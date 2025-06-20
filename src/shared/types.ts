@@ -58,3 +58,21 @@ export type AdminaddUser = {
   role: 'Customer';
 };
 
+
+
+export type DocumentType = 'aadharFront' | 'aadharBack' | 'panFront' | 'panBack';
+
+export type DocumentMap = Record<DocumentType, File | null>;
+
+export type PreviewMap = Record<DocumentType, string | null>;
+
+export interface NameDocument {
+  id: number;
+  file: File | null;
+  preview: string | null;
+}
+
+export interface DocumentUploadData {
+  documents: DocumentMap;
+  nameDocs: NameDocument[];
+}

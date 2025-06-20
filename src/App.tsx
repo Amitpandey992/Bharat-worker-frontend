@@ -12,6 +12,10 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import CustomerListdata from "./pages/CustomerListdata";
 import { CustomerProvider } from "./context/CustomerContext";
 import BookingHistory from "./pages/Customer/BookingHistory";
+import BookingComplaint from "./pages/Customer/BookingComplaint";
+import PartnerSkill from "./pages/Partner/PartnerSkill";
+import PartnerComplent from "./pages/Partner/PartnerComplent";
+import DocumentUpload from "./pages/Partner/DocumentUpdate";
 function App() {
 
   return (
@@ -33,7 +37,12 @@ function App() {
               <Route path="/admins" element={<Admins />} />
               {/* <Route path="/bookinghistory" element={<Bookinghistory />} /> */}
               <Route path="/customerlistdata" element={<CustomerListdata />} />
-              <Route path="/customerbookinghistory" element={<BookingHistory/>}/>
+              <Route path="/customer-booking-history" element={<BookingHistory/>}/>
+              <Route path="/customer-booking-complaint" element={<BookingComplaint/>}/>
+              <Route path="/partner-skill" element={<PartnerSkill/>}/>
+              <Route path="/partner-complent" element={<PartnerComplent/>}/>
+              <Route path="/document-uplode" element={<DocumentUpload/>}/>
+
             </Route>
 
             <Route path="*" element={<NotFound />} />
