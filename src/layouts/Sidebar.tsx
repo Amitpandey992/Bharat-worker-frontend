@@ -1,4 +1,4 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useEffect } from "react";
@@ -36,22 +36,11 @@ interface MenuItem {
 
 const Sidebar = ({ onClose }: SidebarProps) => {
     const location = useLocation();
-    const { user, logout } = useAuth();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
     const [openMenus, setOpenMenus] = useState<string[]>([]);
 
     const navigation: MenuItem[] = [
-        // {
-        //   name: "Dashboard",
-        //   href: "/dashboard",
-        //   icon: <LayoutDashboard className="h-5 w-5" />,
-        // },
-
-        // {
-        //   name: "Admin",
-        //   href: "/admins",
-        //   icon: <Users className="h-5 w-5" />,
-        // },
-
         {
             name: "User Management",
             href: "/user",
@@ -59,7 +48,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             subItems: [
                 {
                     name: "Customer",
-                    href: "/customerlistdata",
+                    href: "/customerlist",
                     icon: <Users className="h-4 w-4" />,
                 },
 
@@ -217,6 +206,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                     size="icon"
                     onClick={() => {
                         logout();
+                        navigate("/login");
                     }}
                     className="text-blue-100 hover:text-blue hover:bg-transparent w-full hover:border-blue-950 hover:border"
                     title="Logout"
