@@ -10,26 +10,30 @@ import { LoginResponse } from "@/shared/types";
 import { Constants } from "@/shared/constants";
 
 interface AuthContextType {
-    user: LoginResponse | null;
+    user: LoginResponse["user"] | null;
     loading: boolean;
     login: (email: string, password: string) => Promise<boolean>;
     logout: () => void;
+    token: string | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<LoginResponse | null>(null);
+    const [user, setUser] = useState<LoginResponse["user"] | null>(null);
+    const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem(
-            Constants.LocalStorageSessionKey
-        );
-        if (storedUser) {
+        const storedUser = localStorage.getItem("user");
+        const storedToken = localStorage.getItem("token");
+        if (storedUser && storedToken) {
             try {
                 const parsedUser = JSON.parse(storedUser);
+                const parsedToken = JSON.parse(storedToken);
+
                 setUser(parsedUser);
+                setToken(parsedToken);
             } catch (error) {
                 console.error("Error parsing stored user:", error);
                 localStorage.removeItem(Constants.LocalStorageSessionKey);
@@ -44,12 +48,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (loginResponse && loginResponse.success) {
                 const userData = loginResponse.data;
 
-                localStorage.setItem(
-                    Constants.LocalStorageSessionKey,
-                    JSON.stringify(userData.token)
-                );
+                localStorage.setItem("token", JSON.stringify(userData.token));
                 localStorage.setItem("user", JSON.stringify(userData.user));
-                setUser(userData);
+
+                setUser(userData.user);
+                setToken(userData.token);
+
                 return true;
             }
             return false;
@@ -60,12 +64,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const logout = () => {
-        localStorage.removeItem(Constants.LocalStorageSessionKey);
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
         setUser(null);
+        setToken(null);
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, token }}>
             {children}
         </AuthContext.Provider>
     );
