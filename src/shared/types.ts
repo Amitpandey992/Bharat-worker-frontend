@@ -90,11 +90,13 @@ export type Skill = {
 };
 
 export type PartnerUser = {
+  isActive: boolean;
   _id: string;
   name: string;
   role: string;
   email: string;
   phone: string;
+ 
 };
 
 export type Partner = {

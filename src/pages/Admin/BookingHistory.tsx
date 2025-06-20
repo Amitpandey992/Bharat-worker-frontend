@@ -64,7 +64,7 @@ const BookingHistory = () => {
                 <Button
                     variant="link"
                     className="px-0 text-sm text-muted-foreground hover:text-primary"
-                    onClick={() => navigate("/customerlistdata")}
+                    onClick={() => navigate("/customerlist")}
                 >
                     <ArrowLeftIcon className="mr-2 h-4 w-4" />
                     Back to Customers

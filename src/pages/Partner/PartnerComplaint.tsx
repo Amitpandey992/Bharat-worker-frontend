@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { Edit, Settings2, MoreVertical, MoreHorizontal } from "lucide-react";
+import { Settings2, MoreHorizontal } from "lucide-react";
 
 import {
   Card,
@@ -24,19 +24,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-// import { IPaginationData } from "@/shared/interfaces";
+import { useAuth } from "@/context/AuthContext";
 
 const PartnerComplaint = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  // const [paginationData, setPaginationData] = useState<IPaginationData>({
-  //   currentPage: 1,
-  //   pageSize: 10,
-  //   totalItems: 0,
-  //   totalPages: 0,
-  // });
-
-  const navigate = useNavigate();
-
+const {isLoading} = usePartner()
   const userObj = {
     id: 1,
     name: "John Doe",

@@ -10,6 +10,7 @@ import CustomerListdata from "@/pages/Admin/CustomerList";
 import DocumentUpload from "@/pages/Partner/DocumentUpdate";
 import { useAuth } from "@/context/AuthContext";
 import CreateService from "@/pages/Customer/CreateService";
+import PartnerList from "./pages/Admin/PartnerList";
 function App() {
     const { user, token } = useAuth();
 
@@ -45,6 +46,10 @@ function App() {
                             <Route
                                 path="/customerlist"
                                 element={<CustomerListdata />}
+                            />
+                            <Route
+                                path="/partnerlist"
+                                element={<PartnerList />}
                             />
                             <Route
                                 path="/bookinghistory/:id"
