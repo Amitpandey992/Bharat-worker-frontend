@@ -152,10 +152,10 @@ function DocumentUpload() {
               <div key={doc.id} className="space-y-2 relative">
                 <label className="text-sm font-medium text-gray-700 block">Document {index + 1}</label>
                 {!doc.preview ? (
-                 <div className="relative w-[300px]">
+                 <div className="relative w-[600px]">
   <input
     type="file"
-    accept="image/*,application/pdf" // ← updated here
+    accept="image/*,application/pdf" 
     onChange={(e) => handleNameDocUpload(e, index)}
     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
   />

@@ -1,11 +1,6 @@
-export interface IPaginatedResponse<T> {
-  dataList: T[];
-  dataCount: number;
-}
-
-export interface IPaginationData {
-  pageSize: number;
+export interface PaginatedResponse {
   currentPage: number;
+  pageSize: number;
   totalItems: number;
   totalPages: number;
 }

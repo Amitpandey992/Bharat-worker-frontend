@@ -24,16 +24,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { IPaginationData } from "@/shared/interfaces";
+// import { IPaginationData } from "@/shared/interfaces";
 
 const PartnerComplent = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [paginationData, setPaginationData] = useState<IPaginationData>({
-    currentPage: 1,
-    pageSize: 10,
-    totalItems: 0,
-    totalPages: 0,
-  });
+  // const [paginationData, setPaginationData] = useState<IPaginationData>({
+  //   currentPage: 1,
+  //   pageSize: 10,
+  //   totalItems: 0,
+  //   totalPages: 0,
+  // });
 
   const navigate = useNavigate();
 

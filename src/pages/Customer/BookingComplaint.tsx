@@ -18,16 +18,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftIcon } from "lucide-react";
-import { IPaginationData } from "@/shared/interfaces";
+// import { IPaginationData } from "@/shared/interfaces";
 
 const BookingComplaint = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [paginationData, setPaginationData] = useState<IPaginationData>({
-    currentPage: 1,
-    pageSize: 10,
-    totalItems: 0,
-    totalPages: 0,
-  });
+  // const [paginationData, setPaginationData] = useState<IPaginationData>({
+  //   currentPage: 1,
+  //   pageSize: 10,
+  //   totalItems: 0,
+  //   totalPages: 0,
+  // });
 
   const navigate = useNavigate();
 
