@@ -18,12 +18,19 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
-import { UserPlus, Edit, MoreHorizontal, Settings2, X, Info } from "lucide-react";
+import {
+    UserPlus,
+    Edit,
+    MoreHorizontal,
+    Settings2,
+    X,
+    Info,
+} from "lucide-react";
 import { CustomerList } from "@/shared/types";
-import { useCustomer } from "@/context/CustomerContext";
 import { useToast } from "@/components/ui/use-toast";
 import { PaginatedResponse } from "@/shared/interfaces";
 import { useNavigate } from "react-router-dom";
+import { useAdmin } from "@/context/AdminContext";
 type CustomerItem = CustomerList["customers"][number];
 
 const CustomerListdata = () => {
@@ -40,7 +47,7 @@ const CustomerListdata = () => {
         addCustomer,
         updateCustomer,
         deactivateCustomer,
-    } = useCustomer();
+    } = useAdmin();
 
     const navigate = useNavigate();
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -409,7 +416,7 @@ const CustomerListdata = () => {
                                                                 )
                                                             }
                                                         >
-                                                            <Info  className="mr-2 h-4 w-4" />
+                                                            <Info className="mr-2 h-4 w-4" />
                                                             View More Details
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>

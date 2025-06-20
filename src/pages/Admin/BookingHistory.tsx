@@ -17,14 +17,14 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftIcon } from "lucide-react";
-import { useCustomer } from "@/context/CustomerContext";
 import { CustomerList } from "@/shared/types";
+import { useAdmin } from "@/context/AdminContext";
 type Customer = CustomerList["customers"][number];
 
 const BookingHistory = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { getCustomer, isLoading } = useCustomer();
+    const { getCustomer, isLoading } = useAdmin();
     const [customer, setCustomer] = useState<Customer | null>(null);
 
     async function fetchCustomer() {
@@ -63,7 +63,7 @@ const BookingHistory = () => {
                 <Button
                     variant="link"
                     className="px-0 text-sm text-muted-foreground hover:text-primary"
-                    onClick={() => navigate("/customerlistdata")}
+                    onClick={() => navigate("/customerlist")}
                 >
                     <ArrowLeftIcon className="mr-2 h-4 w-4" />
                     Back to Customers

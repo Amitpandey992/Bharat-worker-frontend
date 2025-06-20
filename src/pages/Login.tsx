@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
-import { useCustomer } from "@/context/CustomerContext";
 
 export default function Login() {
     const [email, setEmail] = useState("");
