@@ -26,7 +26,7 @@ import {
 } from "@radix-ui/react-dropdown-menu";
 // import { IPaginationData } from "@/shared/interfaces";
 
-const PartnerComplent = () => {
+const PartnerComplaint = () => {
   const [isLoading, setIsLoading] = useState(false);
   // const [paginationData, setPaginationData] = useState<IPaginationData>({
   //   currentPage: 1,
@@ -122,4 +122,4 @@ const PartnerComplent = () => {
   );
 };
 
-export default PartnerComplent;
+export default PartnerComplaint;

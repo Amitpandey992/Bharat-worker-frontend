@@ -20,7 +20,7 @@ import {
 import { ArrowLeftIcon } from "lucide-react";
 // import { IPaginationData } from "@/shared/interfaces";
 
-const PartnerSkill = () => {
+const PartnerList = () => {
   const [isLoading, setIsLoading] = useState(false);
   // const [paginationData, setPaginationData] = useState<IPaginationData>({
   //   currentPage: 1,
@@ -81,4 +81,4 @@ const PartnerSkill = () => {
   );
 };
 
-export default PartnerSkill;
+export default PartnerList;

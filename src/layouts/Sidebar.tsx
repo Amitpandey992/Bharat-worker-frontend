@@ -65,7 +65,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
                 {
                     name: "Partner",
-                    href: "/registration",
+                    href: "/partnerlistdata",
                     icon: <Users className="h-4 w-4" />,
                 },
             ],

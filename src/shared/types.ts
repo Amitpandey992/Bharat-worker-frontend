@@ -82,3 +82,51 @@ export interface DocumentUploadData {
   documents: DocumentMap;
   nameDocs: NameDocument[];
 }
+
+export type Skill = {
+  skillName: string;
+  yearsOfExperience: number;
+  _id: string;
+};
+
+export type PartnerUser = {
+  _id: string;
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+};
+
+export type Partner = {
+  _id: string;
+  user: PartnerUser;
+  aadharBack: string | null;
+  panFront: string | null;
+  panBack: string | null;
+  experienceCertificates: string[]; 
+  kycStatus: 'pending' | 'approved' | 'rejected';
+  kycRejectionReason: string | null;
+  experience: number;
+  performanceScore: any[]; 
+  isSuspended: boolean;
+  skills: Skill[];
+  __v: number;
+};
+
+export type PartnerList = {
+  success: boolean;
+  data: Partner[];
+  message: string;
+};
+
+export type PaginatedPartnerList = {
+  success: boolean;
+  data: Partner[];
+  message: string;
+  pagination?: {
+    currentPage: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+  };
+};

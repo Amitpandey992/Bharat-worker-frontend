@@ -11,10 +11,13 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import BookingHistory from "./pages/Customer/BookingHistory";
 import CustomerListdata from "./pages/Customer/CustomerList";
 import DocumentUpload from "./pages/Partner/DocumentUpdate";
-import PartnerSkill from "./pages/Partner/PartnerSkill";
+import PartnerSkill from "./pages/Partner/PartnerList";
+import PartnerList from "./pages/Partner/PartnerList";
+import PartnerComplent from "./pages/Partner/PartnerComplaint";
+import PartnerComplaint from "./pages/Partner/PartnerComplaint";
 function App() {
     const { user } = useAuth();
-    return ( 
+    return (
         <BrowserRouter>
             <Routes>
                 <Route path="/login" element={<Login />} />
@@ -44,13 +47,17 @@ function App() {
                         path="/customerbookinghistory"
                         element={<BookingHistory />}
                     />
-                      <Route
+                    <Route
                         path="/documentUpload"
                         element={<DocumentUpload />}
                     />
-                     <Route
-                        path="/partner-skill"
-                        element={<PartnerSkill />}
+                    <Route
+                        path="/partnerlist"
+                        element={<PartnerList />}
+                    />
+                    <Route
+                        path="/partnerComplaint"
+                        element={<PartnerComplaint />}
                     />
                 </Route>
 
