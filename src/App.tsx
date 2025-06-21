@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import Layout from "@/layouts/Layout";
-import Dashboard from "@/pages/Dashboard";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -10,6 +9,7 @@ import CustomerListdata from "@/pages/Admin/CustomerList";
 import DocumentUpload from "@/pages/Partner/DocumentUpdate";
 import { useAuth } from "@/context/AuthContext";
 import CreateService from "@/pages/Customer/CreateService";
+import ViewJobs from "./pages/Partner/ViewJobs";
 import PartnerList from "./pages/Admin/PartnerList";
 function App() {
     const { user, token } = useAuth();
@@ -21,7 +21,13 @@ function App() {
                     path="/login"
                     element={
                         token ? (
-                            <Navigate to="/customerlist" replace />
+                            user?.role === "admin" ? (
+                                <Navigate to="/customerlist" replace />
+                            ) : user?.role === "customer" ? (
+                                <Navigate to="/create-service" replace />
+                            ) : (
+                                <Navigate to="/view-job" replace />
+                            )
                         ) : (
                             <Login />
                         )
@@ -42,7 +48,6 @@ function App() {
                                     <Navigate to="/customerlist" replace />
                                 }
                             />
-                            <Route path="/dashboard" element={<Dashboard />} />
                             <Route
                                 path="/customerlist"
                                 element={<CustomerListdata />}
@@ -59,17 +64,29 @@ function App() {
                     ) : user?.role === "customer" ? (
                         <>
                             <Route
-                                path="/create-booking"
+                                path="/"
+                                element={
+                                    <Navigate to="/create-service" replace />
+                                }
+                            />
+                            <Route
+                                path="/create-service"
                                 element={<CreateService />}
                             />
                         </>
                     ) : (
-                        <>
-                            <Route
-                                path="/documentUpload"
-                                element={<DocumentUpload />}
-                            />
-                        </>
+                        user?.role === "partner" && (
+                            <>
+                                <Route
+                                    path="/documentUpload"
+                                    element={<DocumentUpload />}
+                                />
+                                <Route
+                                    path="/view-jobs"
+                                    element={<ViewJobs />}
+                                />
+                            </>
+                        )
                     )}
                 </Route>
 

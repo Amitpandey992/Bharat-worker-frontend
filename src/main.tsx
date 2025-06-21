@@ -4,15 +4,19 @@ import App from "./App";
 import "./styles/globals.css";
 import { AuthProvider } from "./context/AuthContext";
 import { CustomerProvider } from "./context/CustomerContext";
+import { AdminProvider } from "./context/AdminContext";
 import { PartnerProvider } from "./context/PartnerContext";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <AuthProvider>
-            <CustomerProvider>
-                 <PartnerProvider>
-                <App />
-                </PartnerProvider>
-            </CustomerProvider>
+            <AdminProvider>
+                <CustomerProvider>
+                    <PartnerProvider>
+                        <App />
+                    </PartnerProvider>
+                </CustomerProvider>
+            </AdminProvider>
         </AuthProvider>
     </React.StrictMode>
 );

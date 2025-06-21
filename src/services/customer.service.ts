@@ -1,17 +1,18 @@
-import { Constants } from "@/shared/constants";
 import { axiosInstance } from "@/shared/interceptors";
+import { GenericResponse } from "@/shared/types";
 
 export class CustomerService {
-    static async customerList(currentPage: number, pageSize: number) {
+    static async customerList(
+        currentPage: number,
+        pageSize: number
+    ): Promise<GenericResponse<any>> {
         try {
             const res = await axiosInstance.get(
                 `/customer/getCustomers?currentPage=${currentPage}&pageSize=${pageSize}`,
                 {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(
-                            localStorage.getItem(
-                                Constants.LocalStorageSessionKey
-                            ) || "''"
+                            localStorage.getItem("token") || "''"
                         )}`,
                     },
                 }
@@ -23,14 +24,12 @@ export class CustomerService {
         }
     }
 
-    static async addCustomer(payload: any) {
+    static async addCustomer(payload: any): Promise<GenericResponse<any>> {
         try {
             const res = await axiosInstance.post("/auth/register", payload, {
                 headers: {
                     Authorization: `Bearer ${JSON.parse(
-                        localStorage.getItem(
-                            Constants.LocalStorageSessionKey
-                        ) || "''"
+                        localStorage.getItem("token") || "''"
                     )}`,
                 },
             });
@@ -41,7 +40,10 @@ export class CustomerService {
         }
     }
 
-    static async updateCustomer(userId: string, payload: any) {
+    static async updateCustomer(
+        userId: string,
+        payload: any
+    ): Promise<GenericResponse<any>> {
         try {
             const res = await axiosInstance.put(
                 `/user/update/${userId}`,
@@ -49,9 +51,7 @@ export class CustomerService {
                 {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(
-                            localStorage.getItem(
-                                Constants.LocalStorageSessionKey
-                            ) || "''"
+                            localStorage.getItem("token") || "''"
                         )}`,
                     },
                 }
@@ -63,7 +63,9 @@ export class CustomerService {
         }
     }
 
-    static async deactivateCustomer(userId: string) {
+    static async deactivateCustomer(
+        userId: string
+    ): Promise<GenericResponse<any>> {
         try {
             const res = await axiosInstance.put(
                 `/user/update/${userId}`,
@@ -71,9 +73,7 @@ export class CustomerService {
                 {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(
-                            localStorage.getItem(
-                                Constants.LocalStorageSessionKey
-                            ) || "''"
+                            localStorage.getItem("token") || "''"
                         )}`,
                     },
                 }
@@ -85,16 +85,14 @@ export class CustomerService {
         }
     }
 
-    static async getACustomer(id: string) {
+    static async getACustomer(id: string): Promise<GenericResponse<any>> {
         try {
             const response = await axiosInstance.get(
                 `/customer/getCustomer/${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(
-                            localStorage.getItem(
-                                Constants.LocalStorageSessionKey
-                            ) || "''"
+                            localStorage.getItem("token") || "''"
                         )}`,
                     },
                 }
@@ -103,6 +101,30 @@ export class CustomerService {
         } catch (error) {
             console.error(error);
             throw new Error("Error fetching customer");
+        }
+    }
+
+    static async createNewService(
+        name: string,
+        description: string,
+        basePrice: number
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.post(
+                "/service/createService",
+                { name, description, basePrice },
+                {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem("token") || "''"
+                        )}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw new Error("Error creating service");
         }
     }
 }

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 
 const NotFound = () => {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     return (
         <div className="flex h-screen flex-col items-center justify-center bg-wheat">
             <motion.div
@@ -27,7 +27,17 @@ const NotFound = () => {
                     The page you're looking for doesn't exist or has been moved.
                 </p>
                 <Button variant="blue" asChild>
-                    <Link to={token ? "/customerlist" : "/login"}>
+                    <Link
+                        to={
+                            token && user?.role === "admin"
+                                ? "/customerlist"
+                                : token && user?.role === "customer"
+                                ? "/create-service"
+                                : token && user?.role === "partner"
+                                ? "/view-jobs"
+                                : "/login"
+                        }
+                    >
                         Back to {token ? "Dashboard" : "Login"}
                     </Link>
                 </Button>

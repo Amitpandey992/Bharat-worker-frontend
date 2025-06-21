@@ -13,7 +13,7 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuth();
+    const { login, user } = useAuth();
     const navigate = useNavigate();
     const { toast } = useToast();
 
@@ -28,7 +28,13 @@ export default function Login() {
                     title: "Login successful",
                     description: "Welcome to the admin panel!",
                 });
-                navigate("/customerlist");
+                if (user?.role === "admin") {
+                    navigate("/customerlist");
+                } else if (user?.role === "customer") {
+                    navigate("/create-service");
+                } else if (user?.role === "partner") {
+                    navigate("/view-jobs");
+                }
             } else {
                 toast({
                     variant: "destructive",
