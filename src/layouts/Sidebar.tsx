@@ -70,7 +70,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
         },
         {
             name: "Your Bookings",
-            href: "/customer-booking",
+            href: "/bookingList",
             icon: <FilePlus className="h-4 w-4" />,
             role: "customer",
         },

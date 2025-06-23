@@ -58,25 +58,25 @@ export type AdminaddUser = {
   role: "Customer";
 };
 
-export type DocumentType = 'aadharFront' | 'aadharBack' | 'panFront' | 'panBack';
-
+export type DocumentType =
+  | "aadharFront"
+  | "aadharBack"
+  | "panFront"
+  | "panBack";
 
 export type DocumentMap = {
   [key in DocumentType]: File | null;
 };
 
-
 export type PreviewMap = {
   [key in DocumentType]: string | null;
 };
-
 
 export interface NameDocument {
   id: number;
   file: File | null;
   preview: string | null;
 }
-
 
 export interface DocumentUploadData {
   documents: DocumentMap;
@@ -88,7 +88,6 @@ export type Skill = {
   yearsOfExperience: number;
   _id: string;
 };
-
 
 export type PartnerList = {
   partners: {
@@ -122,17 +121,17 @@ export type PartnerList = {
 
 export type CustomerBookingList = {
   customers: {
-   _id: string;
-  partner: any;
-  service: string;
-  status: string;
-  timeSlot: string;
-  location: string;
-  totalAmount: number;
-  paymentStatus: string;
-  createdAt: string;
-    };
-   
+    _id: string;
+    partner: any;
+    service: string;
+    status: string;
+    timeSlot: string;
+    location: string;
+    totalAmount: number;
+    paymentStatus: string;
+    createdAt: string;
+  };
+
   pagination: {
     currentPage: number;
     pageSize: number;
@@ -140,3 +139,4 @@ export type CustomerBookingList = {
     totalPages: number;
   };
 };
+

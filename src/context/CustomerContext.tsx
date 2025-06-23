@@ -1,12 +1,18 @@
 import { CustomerService } from "@/services/customer.service";
-import { IBookingData } from "@/shared/interfaces";
 import { createContext, useContext, ReactNode, useState } from "react";
 
 interface CustomerContextType {
     isLoading: boolean;
-    createNewBooking: (data: IBookingData) => Promise<void>;
+    createNewBooking: (data: {
+        service: string;
+        timeSlot: Date;
+        location: string;
+        totalAmount: number;
+    }) => Promise<void>;
     services: any[];
-    fetchAllServices: () => Promise<void>
+    fetchAllServices: () => Promise<void>;
+    getAllBookingByACustomer: (id: string) => Promise<void>;
+    // customerBookingList: 
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(
@@ -16,9 +22,17 @@ const CustomerContext = createContext<CustomerContextType | undefined>(
 export function CustomerProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
     const [services, setServices] = useState([]);
-    const createNewBooking = async (data: IBookingData) => {
+
+    const createNewBooking = async (data: {
+        service: string;
+        timeSlot: Date;
+        location: string;
+        totalAmount: number;
+    }) => {
         try {
-            const response = await CustomerService.createNewBooking(data);
+            const response = await CustomerService.createNewBookingByCustomer(
+                data
+            );
             return response.data;
         } catch (error) {
             console.error(error);
@@ -28,16 +42,20 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
 
     const fetchAllServices = async () => {
         try {
-            setIsLoading(true)
+            setIsLoading(true);
             const response = await CustomerService.fetchServices();
             setServices(response.data);
         } catch (error) {
             console.error(error);
             throw error;
-        }finally{
-            setIsLoading(false)
+        } finally {
+            setIsLoading(false);
         }
     };
+
+    const getAllBookingByACustomer = async () => {
+
+    }
 
     return (
         <CustomerContext.Provider
@@ -45,7 +63,8 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
                 isLoading,
                 createNewBooking,
                 services,
-                fetchAllServices
+                fetchAllServices,
+                getAllBookingByACustomer
             }}
         >
             {children}

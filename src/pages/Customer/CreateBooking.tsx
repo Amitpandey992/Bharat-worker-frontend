@@ -41,7 +41,8 @@ function CreateBooking() {
 
     const createBooking = async () => {
         setLoading(true);
-        const location = addressViaAutoComplete || addressViaGeoLocation;
+
+        const location = addressViaAutoComplete;
         if (!data.service || !data.timeSlot || !data.totalAmount || !location) {
             toast({
                 title: "Missing fields",
@@ -62,7 +63,6 @@ function CreateBooking() {
 
         try {
             await createNewBooking({
-                customer: user.id,
                 service: data.service,
                 timeSlot: data.timeSlot,
                 location: location,
@@ -76,7 +76,7 @@ function CreateBooking() {
                 totalAmount: null,
             });
             setAddressViaAutoComplete("");
-            setAddressViaGeoLocation("");
+            // setAddressViaGeoLocation("");
             setCoords({ lat: 0, lng: 0 });
 
             if (autocompleteRef.current) {
@@ -98,64 +98,64 @@ function CreateBooking() {
         }
     };
 
-    const handleUseMyLocation = () => {
-        if (addressViaAutoComplete) {
-            toast({
-                title: "Location already selected",
-                description:
-                    "Please clear the autocomplete location first to use geolocation.",
-                variant: "destructive",
-            });
-            return;
-        }
+    // const handleUseMyLocation = () => {
+    //     if (addressViaAutoComplete) {
+    //         toast({
+    //             title: "Location already selected",
+    //             description:
+    //                 "Please clear the autocomplete location first to use geolocation.",
+    //             variant: "destructive",
+    //         });
+    //         return;
+    //     }
 
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                const { latitude, longitude } = position.coords;
-                setCoords({ lat: latitude, lng: longitude });
+    //     navigator.geolocation.getCurrentPosition(
+    //         async (position) => {
+    //             const { latitude, longitude } = position.coords;
+    //             setCoords({ lat: latitude, lng: longitude });
 
-                const res = await fetch(
-                    `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
-                    {
-                        headers: {
-                            "User-Agent": "Amit pandey",
-                        },
-                    }
-                );
+    //             const res = await fetch(
+    //                 `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
+    //                 {
+    //                     headers: {
+    //                         "User-Agent": "Amit pandey",
+    //                     },
+    //                 }
+    //             );
 
-                if (!res.ok) {
-                    toast({
-                        title: "Failed to fetch address",
-                        description:
-                            "Could not retrieve address details. Please try again.",
-                        variant: "destructive",
-                    });
-                    return;
-                }
+    //             if (!res.ok) {
+    //                 toast({
+    //                     title: "Failed to fetch address",
+    //                     description:
+    //                         "Could not retrieve address details. Please try again.",
+    //                     variant: "destructive",
+    //                 });
+    //                 return;
+    //             }
 
-                const data = await res.json();
-                const address = data.display_name;
-                setAddressViaGeoLocation(address);
-                setData((prev) => ({
-                    ...prev,
-                    location: address,
-                }));
-                toast({
-                    title: "Location set successfully",
-                    description: "Your current location has been detected.",
-                });
-            },
-            (error) => {
-                toast({
-                    title: "Location permission denied",
-                    description:
-                        "Please allow location access to use this feature.",
-                    variant: "destructive",
-                });
-                console.error(error);
-            }
-        );
-    };
+    //             const data = await res.json();
+    //             const address = data.display_name;
+    //             setAddressViaGeoLocation(address);
+    //             setData((prev) => ({
+    //                 ...prev,
+    //                 location: address,
+    //             }));
+    //             toast({
+    //                 title: "Location set successfully",
+    //                 description: "Your current location has been detected.",
+    //             });
+    //         },
+    //         (error) => {
+    //             toast({
+    //                 title: "Location permission denied",
+    //                 description:
+    //                     "Please allow location access to use this feature.",
+    //                 variant: "destructive",
+    //             });
+    //             console.error(error);
+    //         }
+    //     );
+    // };
 
     const handleClearAutoComplete = () => {
         setAddressViaAutoComplete("");
@@ -168,14 +168,14 @@ function CreateBooking() {
         });
     };
 
-    const handleClearGeoLocation = () => {
-        setAddressViaGeoLocation("");
-        setCoords({ lat: 0, lng: 0 });
-        toast({
-            title: "Location cleared",
-            description: "Geolocation has been removed.",
-        });
-    };
+    // const handleClearGeoLocation = () => {
+    //     setAddressViaGeoLocation("");
+    //     setCoords({ lat: 0, lng: 0 });
+    //     toast({
+    //         title: "Location cleared",
+    //         description: "Geolocation has been removed.",
+    //     });
+    // };
 
     useEffect(() => {
         fetchAllServices();

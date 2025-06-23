@@ -15,3 +15,6 @@ export interface IBookingData {
     status?: "pending" | "ongoing" | "completed" | "cancelled";
     paymentStatus?: "pending" | "paid" | "failed" | "refunded";
 }
+
+
+
