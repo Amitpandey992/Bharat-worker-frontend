@@ -4,7 +4,8 @@ import Layout from "@/layouts/Layout";
 import Login from "@/pages/Login";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import BookingHistory from "@/pages/Admin/BookingHistory";
+// import BookingHistory from "@/pages/Admin/CustomerDetails";
+import CustomerDetails from "./pages/Admin/CustomerDetails";
 import CustomerListdata from "@/pages/Admin/CustomerList";
 import DocumentUpload from "@/pages/Partner/DocumentUpdate";
 import { useAuth } from "@/context/AuthContext";
@@ -59,8 +60,8 @@ console.log(user)
                                 element={<PartnerList />}
                             />
                             <Route
-                                path="/bookinghistory/:id"
-                                element={<BookingHistory />}
+                                path="/customerDetails/:id"
+                                element={<CustomerDetails />}
                                
                             />
                               <Route

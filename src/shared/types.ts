@@ -119,3 +119,24 @@ export type PartnerList = {
     totalPages: number;
   }
 }
+
+export type CustomerBookingList = {
+  customers: {
+   _id: string;
+  partner: any;
+  service: string;
+  status: string;
+  timeSlot: string;
+  location: string;
+  totalAmount: number;
+  paymentStatus: string;
+  createdAt: string;
+    };
+   
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalItems: number;
+    totalPages: number;
+  };
+};

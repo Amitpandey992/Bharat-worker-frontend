@@ -21,7 +21,7 @@ import { CustomerList } from "@/shared/types";
 import { useAdmin } from "@/context/AdminContext";
 type Customer = CustomerList["customers"][number];
 
-const BookingHistory = () => {
+const CustomerDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { getCustomer, isLoading } = useAdmin();
@@ -143,4 +143,4 @@ const BookingHistory = () => {
     );
 };
 
-export default BookingHistory;
+export default CustomerDetails;

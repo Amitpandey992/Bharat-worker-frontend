@@ -61,19 +61,30 @@ const CustomerListdata = () => {
         password: "",
         phone: "",
         role: "customer",
+        isActive: true,
+
     });
     const { toast } = useToast();
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = e.target;
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value, type } = e.target;
 
+        // For checkbox (only input has 'checked')
+        const isCheckbox = type === "checkbox";
+
+        // For phone number validation
         if (name === "phone" && !/^\d{0,10}$/.test(value)) return;
 
         setFormData((prev) => ({
             ...prev,
-            [name]: type === "checkbox" ? checked : value,
+            [name]: isCheckbox
+                ? (e.target as HTMLInputElement).checked
+                : value,
         }));
     };
+
 
     const resetForm = () => {
         setFormData({
@@ -82,52 +93,69 @@ const CustomerListdata = () => {
             password: "",
             phone: "",
             role: "customer",
+            isActive: true,
         });
         setEditData(null);
     };
 
-    const saveNewCustomer = async () => {
-        if (editData) {
-            await updateCustomer(editData.user._id, formData);
-        } else {
-            if (
-                !formData.name ||
-                !formData.email ||
-                !formData.phone ||
-                !formData.password
-            ) {
-                toast({
-                    title: "Please fill all the fields",
-                    variant: "destructive",
-                    duration: 3000,
-                });
-                return;
-            }
+ const saveNewCustomer = async () => {
+    if (editData) {
+        await updateCustomer(editData.user._id, formData);
 
-            if (formData.phone.length !== 10 || isNaN(Number(formData.phone))) {
-                toast({
-                    title: "Please enter a valid 10-digit phone number",
-                    variant: "destructive",
-                    duration: 3000,
-                });
-                return;
-            }
-
-            if (!formData.email.includes("@")) {
-                toast({
-                    title: "Please enter a valid email address",
-                    variant: "destructive",
-                    duration: 3000,
-                });
-                return;
-            }
-
-            await addCustomer(formData);
+        toast({
+            title: `Customer ${formData.isActive ? "activated" : "deactivated"} successfully`,
+            description: `Customer "${formData.name}" has been ${formData.isActive ? "activated" : "deactivated"}.`,
+            variant: "default",
+            duration: 3000,
+        });
+    } else {
+        // Validation
+        if (
+            !formData.name ||
+            !formData.email ||
+            !formData.phone ||
+            !formData.password
+        ) {
+            toast({
+                title: "Please fill all the fields",
+                variant: "destructive",
+                duration: 3000,
+            });
+            return;
         }
 
-        setDialogOpen(false);
-        resetForm();
-    };
+        if (formData.phone.length !== 10 || isNaN(Number(formData.phone))) {
+            toast({
+                title: "Please enter a valid 10-digit phone number",
+                variant: "destructive",
+                duration: 3000,
+            });
+            return;
+        }
+
+        if (!formData.email.includes("@")) {
+            toast({
+                title: "Please enter a valid email address",
+                variant: "destructive",
+                duration: 3000,
+            });
+            return;
+        }
+
+        await addCustomer(formData);
+
+        toast({
+            title: "Customer added successfully",
+            description: `Customer "${formData.name}" has been added.`,
+            variant: "default",
+            duration: 3000,
+        });
+    }
+
+    setDialogOpen(false);
+    resetForm();
+};
+
 
     const editCustomer = (userData: CustomerItem) => {
         setEditData(userData);
@@ -137,6 +165,7 @@ const CustomerListdata = () => {
             password: "",
             phone: userData.user.phone.toString(),
             role: userData.user.role,
+            isActive: userData.user.isActive,
         });
         setDialogOpen(true);
     };
@@ -229,7 +258,7 @@ const CustomerListdata = () => {
                                         : "Add Customer"}
                                 </Dialog.Title>
                                 <div className="space-y-4">
-                                    {["name", "email", "password", "phone"].map(
+                                    {["name", "email","phone"].map(
                                         (field) => (
                                             <div key={field}>
                                                 <label className="block text-sm font-medium capitalize">
@@ -238,11 +267,7 @@ const CustomerListdata = () => {
                                                 <input
                                                     className="w-full border rounded p-2"
                                                     name={field}
-                                                    type={
-                                                        field === "password"
-                                                            ? "password"
-                                                            : "text"
-                                                    }
+                                                    type="text"
                                                     value={
                                                         (formData as any)[field]
                                                     }
@@ -264,6 +289,27 @@ const CustomerListdata = () => {
                                             disabled
                                         />
                                     </div>
+                                    <div className="mt-4">
+                                        <label className="block text-sm font-medium">
+                                            Customer Status
+                                        </label>
+                                        <select
+                                            name="isActive"
+                                            value={formData.isActive ? "active" : "inactive"}
+                                            onChange={(e) =>
+                                                setFormData((prev) => ({
+                                                    ...prev,
+                                                    isActive: e.target.value === "active",
+                                                }))
+                                            }
+                                            className="w-full border rounded p-2"
+                                        >
+                                            <option value="active">Active</option>
+                                            <option value="inactive">InActive</option>
+                                        </select>
+                                    </div>
+
+
                                 </div>
                                 <div className="mt-6 flex justify-end gap-2">
                                     <Button
@@ -320,7 +366,6 @@ const CustomerListdata = () => {
                                     <TableHead>Customer Name</TableHead>
                                     <TableHead>Customer Email</TableHead>
                                     <TableHead>Customer Mobile No.</TableHead>
-
                                     <TableHead>Role</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead className="text-right">
@@ -358,19 +403,18 @@ const CustomerListdata = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <span
-                                                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                        userObj.user.isActive
-                                                            ? "bg-green-100 text-green-700"
-                                                            : "bg-red-100 text-red-700"
-                                                    }`}
+                                                    className={`px-2 py-1 rounded-full text-xs font-medium ${userObj.user.isActive
+                                                        ? "bg-green-100 text-green-700"
+                                                        : "bg-red-100 text-red-700"
+                                                        }`}
                                                 >
-                                        {userObj.user.isActive
+                                                    {userObj.user.isActive
                                                         ? "Active"
-                                                        : "Inactive"}
+                                                        : "InActive"}
                                                 </span>
                                             </TableCell>
 
-                                            
+
                                             <TableCell className="text-right">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger
@@ -414,7 +458,7 @@ const CustomerListdata = () => {
                                                             className="flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted text-nowrap "
                                                             onClick={() =>
                                                                 navigate(
-                                                                    `/bookinghistory/${userObj._id}`
+                                                                    `/customerDetails/${userObj._id}`
                                                                 )
                                                             }
                                                         >

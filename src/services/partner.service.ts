@@ -71,4 +71,6 @@ export class PartnerService {
             throw new Error("Error fetching customer");
         }
     }
+
+    
 }

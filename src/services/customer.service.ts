@@ -47,7 +47,7 @@ export class CustomerService {
     ): Promise<GenericResponse<any>> {
         try {
             const res = await axiosInstance.put(
-                `/user/update/${userId}`,
+                `/admin/update/${userId}`,
                 payload,
                 {
                     headers: {
