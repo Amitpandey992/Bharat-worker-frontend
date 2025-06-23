@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/shared/interceptors";
+import { IBookingData } from "@/shared/interfaces";
 import { GenericResponse } from "@/shared/types";
 
 export class CustomerService {
@@ -104,15 +105,40 @@ export class CustomerService {
         }
     }
 
-    static async createNewService(
-        name: string,
-        description: string,
-        basePrice: number
+    // static async createNewService(data: {
+    //     name: string;
+    //     description: string;
+    //     basePrice: number;
+    //     location: string;
+    // }): Promise<GenericResponse<any>> {
+    //     try {
+    //         const response = await axiosInstance.post(
+    //             "/service/createService",
+    //             data,
+    //             {
+    //                 headers: {
+    //                     Authorization: `Bearer ${JSON.parse(
+    //                         localStorage.getItem(
+    //                             Constants.LocalStorageSessionKey
+    //                         ) || "''"
+    //                     )}`,
+    //                 },
+    //             }
+    //         );
+    //         return response.data;
+    //     } catch (error) {
+    //         console.error(error);
+    //         throw new Error("Error during creating new service");
+    //     }
+    // }
+
+    static async createNewBooking(
+        data: IBookingData
     ): Promise<GenericResponse<any>> {
         try {
             const response = await axiosInstance.post(
-                "/service/createService",
-                { name, description, basePrice },
+                "/booking/createBookingByCustomer",
+                data,
                 {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(
@@ -124,7 +150,23 @@ export class CustomerService {
             return response.data;
         } catch (error) {
             console.error(error);
-            throw new Error("Error creating service");
+            throw new Error("Error fetching customer");
+        }
+    }
+
+    static async fetchServices(): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.get("/service/getAllService", {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(
+                        localStorage.getItem("token") || "''"
+                    )}`,
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw new Error("Error fetching services");
         }
     }
 }

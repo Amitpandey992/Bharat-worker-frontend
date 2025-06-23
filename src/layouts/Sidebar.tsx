@@ -69,8 +69,14 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             ],
         },
         {
-            name: "Create service",
-            href: "/create-service",
+            name: "Your Bookings",
+            href: "/customer-booking",
+            icon: <FilePlus className="h-4 w-4" />,
+            role: "customer",
+        },
+        {
+            name: "Create Booking",
+            href: "/create-booking",
             icon: <FilePlus className="h-4 w-4" />,
             role: "customer",
         },

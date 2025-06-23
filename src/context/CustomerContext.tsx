@@ -1,22 +1,12 @@
 import { CustomerService } from "@/services/customer.service";
-import {
-    createContext,
-    useContext,
-    ReactNode,
-    SetStateAction,
-    Dispatch,
-    useState,
-} from "react";
+import { IBookingData } from "@/shared/interfaces";
+import { createContext, useContext, ReactNode, useState } from "react";
 
 interface CustomerContextType {
     isLoading: boolean;
-    setIsLoading: Dispatch<SetStateAction<boolean>>;
-    serviceList: any[];
-    createNewService: (
-        name: string,
-        description: string,
-        basePrice: number
-    ) => Promise<void>;
+    createNewBooking: (data: IBookingData) => Promise<void>;
+    services: any[];
+    fetchAllServices: () => Promise<void>
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(
@@ -25,34 +15,37 @@ const CustomerContext = createContext<CustomerContextType | undefined>(
 
 export function CustomerProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
-    const [serviceList, setServiceList] = useState<any[]>([]);
-
-    async function createNewService(
-        name: string,
-        description: string,
-        basePrice: number
-    ) {
+    const [services, setServices] = useState([]);
+    const createNewBooking = async (data: IBookingData) => {
         try {
-            setIsLoading(true);
-            const response = await CustomerService.createNewService(
-                name,
-                description,
-                basePrice
-            );
-            setServiceList(response.data);
+            const response = await CustomerService.createNewBooking(data);
+            return response.data;
         } catch (error) {
-        } finally {
-            setIsLoading(false);
+            console.error(error);
+            throw error;
         }
-    }
+    };
+
+    const fetchAllServices = async () => {
+        try {
+            setIsLoading(true)
+            const response = await CustomerService.fetchServices();
+            setServices(response.data);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }finally{
+            setIsLoading(false)
+        }
+    };
 
     return (
         <CustomerContext.Provider
             value={{
                 isLoading,
-                setIsLoading,
-                serviceList,
-                createNewService
+                createNewBooking,
+                services,
+                fetchAllServices
             }}
         >
             {children}
