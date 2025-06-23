@@ -1,27 +1,29 @@
+import { PartnerService } from '@/services/partner.service';
+
 import {
     createContext,
     useContext,
-    useState,
     ReactNode,
+    SetStateAction,
+    Dispatch,
+    useState,
 
 } from 'react';
 
 interface PartnerContextType {
+  isLoading: boolean;
+    setIsLoading: Dispatch<SetStateAction<boolean>>;
+    serviceList: any[];
 
 }
 
 const PartnerContext = createContext<PartnerContextType | undefined>(undefined);
 
 export const PartnerProvider = ({ children }: { children: ReactNode }) => {
-
-
-    const [isLoading, setIsLoading] = useState(false);
-
-
-
-    return (
+const [isLoading, setIsLoading] = useState(false);
+   return (
         <PartnerContext.Provider
-            value={{ isLoading }}
+            value={{ isLoading,  setIsLoading, }}
         >
             {children}
         </PartnerContext.Provider>
