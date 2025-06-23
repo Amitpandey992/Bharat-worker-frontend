@@ -14,7 +14,7 @@ import PartnerList from "./pages/Admin/PartnerList";
 import BookingList from "./pages/Customer/BookingList";
 function App() {
     const { user, token } = useAuth();
-
+console.log(user)
     return (
         <BrowserRouter>
             <Routes>
@@ -60,6 +60,11 @@ function App() {
                             <Route
                                 path="/bookinghistory/:id"
                                 element={<BookingHistory />}
+                               
+                            />
+                              <Route
+                                path="/partnerDetails/:id"
+                                element={<PartnerDetails />}
                             />
                         </>
                     ) : user?.role === "customer" ? (

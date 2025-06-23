@@ -25,9 +25,10 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { useAuth } from "@/context/AuthContext";
+import { useAdmin } from "@/context/AdminContext";
 
 const PartnerComplaint = () => {
-const {isLoading} = usePartner()
+const {isLoading} = useAdmin()
   const userObj = {
     id: 1,
     name: "John Doe",

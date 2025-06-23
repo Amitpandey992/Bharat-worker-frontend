@@ -364,11 +364,13 @@ const CustomerListdata = () => {
                                                             : "bg-red-100 text-red-700"
                                                     }`}
                                                 >
-                                                    {userObj.user.isActive
+                                        {userObj.user.isActive
                                                         ? "Active"
                                                         : "Inactive"}
                                                 </span>
                                             </TableCell>
+
+                                            
                                             <TableCell className="text-right">
                                                 <DropdownMenu>
                                                     <DropdownMenuTrigger
