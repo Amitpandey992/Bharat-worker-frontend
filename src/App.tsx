@@ -12,6 +12,7 @@ import CreateBooking from "@/pages/Customer/CreateBooking";
 import ViewJobs from "./pages/Partner/ViewJobs";
 import PartnerList from "./pages/Admin/PartnerList";
 import BookingList from "./pages/Customer/BookingList";
+import PartnerDetails from "./pages/Admin/PartnerDetails";
 function App() {
     const { user, token } = useAuth();
 console.log(user)
