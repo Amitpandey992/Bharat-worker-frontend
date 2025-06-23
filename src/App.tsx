@@ -8,9 +8,10 @@ import BookingHistory from "@/pages/Admin/BookingHistory";
 import CustomerListdata from "@/pages/Admin/CustomerList";
 import DocumentUpload from "@/pages/Partner/DocumentUpdate";
 import { useAuth } from "@/context/AuthContext";
-import CreateService from "@/pages/Customer/CreateService";
+import CreateBooking from "@/pages/Customer/CreateBooking";
 import ViewJobs from "./pages/Partner/ViewJobs";
 import PartnerList from "./pages/Admin/PartnerList";
+import BookingList from "./pages/Customer/BookingList";
 function App() {
     const { user, token } = useAuth();
 
@@ -65,13 +66,15 @@ function App() {
                         <>
                             <Route
                                 path="/"
-                                element={
-                                    <Navigate to="/create-service" replace />
-                                }
+                                element={<Navigate to="/bookingList" replace />}
                             />
                             <Route
-                                path="/create-service"
-                                element={<CreateService />}
+                                path="/bookingList"
+                                element={<BookingList />}
+                            />
+                            <Route
+                                path="/create-booking"
+                                element={<CreateBooking />}
                             />
                         </>
                     ) : (

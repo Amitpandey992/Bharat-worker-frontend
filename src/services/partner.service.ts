@@ -2,12 +2,11 @@ import { Constants } from "@/shared/constants";
 import { axiosInstance } from "@/shared/interceptors";
 import { GenericResponse } from "@/shared/types";
 
-
 export class PartnerService {
-
-
-    static async partnerList(currentPage: number,
-        pageSize: number): Promise<GenericResponse<any>> {
+    static async partnerList(
+        currentPage: number,
+        pageSize: number
+    ): Promise<GenericResponse<any>> {
         try {
             const res = await axiosInstance.get(
                 `/partner/getPartners?currentPage=${currentPage}&pageSize=${pageSize} `,
@@ -28,7 +27,11 @@ export class PartnerService {
         }
     }
 
-    static async updatePartnerSkills(partnerId: string, skillId: string, payload: any) {
+    static async updatePartnerSkills(
+        partnerId: string,
+        skillId: string,
+        payload: any
+    ): Promise<GenericResponse<any>> {
         try {
             const res = await axiosInstance.put(
                 `/partner/updateSkills/partnerId/${partnerId}/skillId/${skillId}`,
@@ -36,7 +39,9 @@ export class PartnerService {
                 {
                     headers: {
                         Authorization: `Bearer ${JSON.parse(
-                            localStorage.getItem(Constants.LocalStorageSessionKey) || "''"
+                            localStorage.getItem(
+                                Constants.LocalStorageSessionKey
+                            ) || "''"
                         )}`,
                     },
                 }
@@ -47,6 +52,4 @@ export class PartnerService {
             throw new Error("Error during partner skill update");
         }
     }
-
 }
-

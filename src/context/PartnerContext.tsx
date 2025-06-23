@@ -1,28 +1,16 @@
-import {
-    createContext,
-    useContext,
-    useState,
-    ReactNode,
-
-} from 'react';
+import { createContext, useContext, useState, ReactNode } from "react";
 
 interface PartnerContextType {
-
+    isLoading: boolean;
 }
 
 const PartnerContext = createContext<PartnerContextType | undefined>(undefined);
 
 export const PartnerProvider = ({ children }: { children: ReactNode }) => {
-
-
     const [isLoading, setIsLoading] = useState(false);
 
-
-
     return (
-        <PartnerContext.Provider
-            value={{ isLoading }}
-        >
+        <PartnerContext.Provider value={{ isLoading }}>
             {children}
         </PartnerContext.Provider>
     );
@@ -31,7 +19,7 @@ export const PartnerProvider = ({ children }: { children: ReactNode }) => {
 export function usePartner() {
     const context = useContext(PartnerContext);
     if (!context) {
-        throw new Error('usePartner must be used within a PartnerProvider');
+        throw new Error("usePartner must be used within a PartnerProvider");
     }
     return context;
 }
