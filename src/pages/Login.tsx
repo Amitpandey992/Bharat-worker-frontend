@@ -22,8 +22,8 @@ export default function Login() {
         setIsLoading(true);
 
         try {
-            const success = await login(email, password);
-            if (success) {
+            const result = await login(email, password);
+            if (result.success) {
                 toast({
                     title: "Login successful",
                     description: "Welcome to the admin panel!",
@@ -31,10 +31,15 @@ export default function Login() {
                 if (user?.role === "admin") {
                     navigate("/customerlist");
                 } else if (user?.role === "customer") {
-                    navigate("/create-service");
+                    navigate("/bookingList");
                 } else if (user?.role === "partner") {
                     navigate("/view-jobs");
                 }
+            } else if (result.deactivated) {
+                toast({
+                    title: "Your Account is deactivated. Please contact admin.",
+                    variant: "destructive",
+                });
             } else {
                 toast({
                     variant: "destructive",

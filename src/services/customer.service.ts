@@ -44,11 +44,20 @@ export class CustomerService {
     }
 
     static async getAllBookingByCustomer(
-        id: string
+        id: string,
+        currentPage: number,
+        pageSize: number
     ): Promise<GenericResponse<any>> {
         try {
             const response = await axiosInstance.get(
-                `/booking/allbooking/customer/${id}`
+                `/booking/allbooking/customer/${id}?currentPage=${currentPage}&pageSize=${pageSize}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem("token") || "''"
+                        )}`,
+                    },
+                }
             );
             return response.data;
         } catch (error) {

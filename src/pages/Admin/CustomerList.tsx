@@ -31,6 +31,20 @@ import { useToast } from "@/components/ui/use-toast";
 import { PaginatedResponse } from "@/shared/interfaces";
 import { useNavigate } from "react-router-dom";
 import { useAdmin } from "@/context/AdminContext";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+    Select,
+    SelectGroup,
+    SelectValue,
+    SelectTrigger,
+    SelectContent,
+    SelectLabel,
+    SelectItem,
+    SelectSeparator,
+    SelectScrollUpButton,
+    SelectScrollDownButton,
+} from "@/components/ui/select";
 type CustomerItem = CustomerList["customers"][number];
 
 const CustomerListdata = () => {
@@ -62,7 +76,6 @@ const CustomerListdata = () => {
         phone: "",
         role: "customer",
         isActive: true,
-
     });
     const { toast } = useToast();
 
@@ -71,20 +84,15 @@ const CustomerListdata = () => {
     ) => {
         const { name, value, type } = e.target;
 
-        // For checkbox (only input has 'checked')
         const isCheckbox = type === "checkbox";
 
-        // For phone number validation
         if (name === "phone" && !/^\d{0,10}$/.test(value)) return;
 
         setFormData((prev) => ({
             ...prev,
-            [name]: isCheckbox
-                ? (e.target as HTMLInputElement).checked
-                : value,
+            [name]: isCheckbox ? (e.target as HTMLInputElement).checked : value,
         }));
     };
-
 
     const resetForm = () => {
         setFormData({
@@ -98,64 +106,56 @@ const CustomerListdata = () => {
         setEditData(null);
     };
 
- const saveNewCustomer = async () => {
-    if (editData) {
-        await updateCustomer(editData.user._id, formData);
+    const saveNewCustomer = async () => {
+        if (editData) {
+            await updateCustomer(editData.user._id, formData);
 
-        toast({
-            title: `Customer ${formData.isActive ? "activated" : "deactivated"} successfully`,
-            description: `Customer "${formData.name}" has been ${formData.isActive ? "activated" : "deactivated"}.`,
-            variant: "default",
-            duration: 3000,
-        });
-    } else {
-        // Validation
-        if (
-            !formData.name ||
-            !formData.email ||
-            !formData.phone ||
-            !formData.password
-        ) {
             toast({
-                title: "Please fill all the fields",
-                variant: "destructive",
+                title: `${formData.name} updated successfully`,
+                variant: "default",
                 duration: 3000,
             });
-            return;
-        }
+        } else {
+            if (
+                !formData.name ||
+                !formData.email ||
+                !formData.phone ||
+                !formData.password
+            ) {
+                toast({
+                    title: "Please fill all the fields",
+                    variant: "destructive",
+                });
+                return;
+            }
 
-        if (formData.phone.length !== 10 || isNaN(Number(formData.phone))) {
+            if (formData.phone.length !== 10 || isNaN(Number(formData.phone))) {
+                toast({
+                    title: "Please enter a valid 10-digit phone number",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            if (!formData.email.includes("@")) {
+                toast({
+                    title: "Please enter a valid email address",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            await addCustomer(formData);
+
             toast({
-                title: "Please enter a valid 10-digit phone number",
-                variant: "destructive",
-                duration: 3000,
+                title: "Customer added successfully",
+                variant: "default",
             });
-            return;
         }
 
-        if (!formData.email.includes("@")) {
-            toast({
-                title: "Please enter a valid email address",
-                variant: "destructive",
-                duration: 3000,
-            });
-            return;
-        }
-
-        await addCustomer(formData);
-
-        toast({
-            title: "Customer added successfully",
-            description: `Customer "${formData.name}" has been added.`,
-            variant: "default",
-            duration: 3000,
-        });
-    }
-
-    setDialogOpen(false);
-    resetForm();
-};
-
+        setDialogOpen(false);
+        resetForm();
+    };
 
     const editCustomer = (userData: CustomerItem) => {
         setEditData(userData);
@@ -257,31 +257,30 @@ const CustomerListdata = () => {
                                         ? "Edit Customer"
                                         : "Add Customer"}
                                 </Dialog.Title>
-                                <div className="space-y-4">
-                                    {["name", "email","phone"].map(
-                                        (field) => (
-                                            <div key={field}>
-                                                <label className="block text-sm font-medium capitalize">
-                                                    {field}
-                                                </label>
-                                                <input
-                                                    className="w-full border rounded p-2"
-                                                    name={field}
-                                                    type="text"
-                                                    value={
-                                                        (formData as any)[field]
-                                                    }
-                                                    onChange={handleInputChange}
-                                                    placeholder={`Enter ${field}`}
-                                                />
-                                            </div>
-                                        )
-                                    )}
-                                    <div>
-                                        <label className="block text-sm font-medium">
+                                <div className="mt-4 space-y-2">
+                                    {["name", "email", "phone"].map((field) => (
+                                        <div
+                                            key={field}
+                                            className="mt-4 space-y-2"
+                                        >
+                                            <Label className="block text-sm font-medium capitalize">
+                                                {field}
+                                            </Label>
+                                            <Input
+                                                className="w-full border rounded p-2"
+                                                name={field}
+                                                type="text"
+                                                value={(formData as any)[field]}
+                                                onChange={handleInputChange}
+                                                placeholder={`Enter ${field}`}
+                                            />
+                                        </div>
+                                    ))}
+                                    <div className="mt-4 space-y-2">
+                                        <Label className="block text-sm font-medium">
                                             Role
-                                        </label>
-                                        <input
+                                        </Label>
+                                        <Input
                                             className="w-full border rounded p-2"
                                             name="role"
                                             value={formData.role}
@@ -289,27 +288,38 @@ const CustomerListdata = () => {
                                             disabled
                                         />
                                     </div>
-                                    <div className="mt-4">
-                                        <label className="block text-sm font-medium">
+                                    <div className="mt-4 space-y-2">
+                                        <Label className="block text-sm font-medium">
                                             Customer Status
-                                        </label>
-                                        <select
+                                        </Label>
+                                        <Select
                                             name="isActive"
-                                            value={formData.isActive ? "active" : "inactive"}
-                                            onChange={(e) =>
+                                            value={
+                                                formData.isActive
+                                                    ? "active"
+                                                    : "inactive"
+                                            }
+                                            onValueChange={(value) =>
                                                 setFormData((prev) => ({
                                                     ...prev,
-                                                    isActive: e.target.value === "active",
+                                                    isActive:
+                                                        value === "active",
                                                 }))
                                             }
-                                            className="w-full border rounded p-2"
                                         >
-                                            <option value="active">Active</option>
-                                            <option value="inactive">InActive</option>
-                                        </select>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select..." />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="active">
+                                                    Active
+                                                </SelectItem>
+                                                <SelectItem value="inactive">
+                                                    InActive
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
-
-
                                 </div>
                                 <div className="mt-6 flex justify-end gap-2">
                                     <Button
@@ -403,17 +413,17 @@ const CustomerListdata = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <span
-                                                    className={`px-2 py-1 rounded-full text-xs font-medium ${userObj.user.isActive
-                                                        ? "bg-green-100 text-green-700"
-                                                        : "bg-red-100 text-red-700"
-                                                        }`}
+                                                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                                        userObj.user.isActive
+                                                            ? "bg-green-100 text-green-700"
+                                                            : "bg-red-100 text-red-700"
+                                                    }`}
                                                 >
                                                     {userObj.user.isActive
                                                         ? "Active"
                                                         : "InActive"}
                                                 </span>
                                             </TableCell>
-
 
                                             <TableCell className="text-right">
                                                 <DropdownMenu>

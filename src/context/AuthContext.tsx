@@ -8,11 +8,15 @@ import {
 import { AuthService } from "@/services/auth.service";
 import { LoginResponse } from "@/shared/types";
 import { Constants } from "@/shared/constants";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AuthContextType {
     user: LoginResponse["user"] | null;
     loading: boolean;
-    login: (email: string, password: string) => Promise<boolean>;
+    login: (
+        email: string,
+        password: string
+    ) => Promise<{ success: boolean; deactivated?: boolean }>;
     logout: () => void;
     token: string | null;
 }
@@ -23,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<LoginResponse["user"] | null>(null);
     const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -42,24 +47,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setLoading(false);
     }, []);
 
-    const login = async (email: string, password: string): Promise<boolean> => {
+    const login = async (
+        email: string,
+        password: string
+    ): Promise<{ success: boolean; deactivated?: boolean }> => {
         try {
             const loginResponse = await AuthService.login({ email, password });
             if (loginResponse && loginResponse.success) {
                 const userData = loginResponse.data;
-
+                console.log(loginResponse.message);
                 localStorage.setItem("token", JSON.stringify(userData.token));
                 localStorage.setItem("user", JSON.stringify(userData.user));
 
                 setUser(userData.user);
                 setToken(userData.token);
 
-                return true;
+                return { success: true };
+            } else if (
+                !loginResponse.success &&
+                loginResponse.message ===
+                    "Account is deactivated. Please contact admin."
+            ) {
+                console.log(loginResponse.message);
+                return { success: false, deactivated: true };
             }
-            return false;
+            return { success: false };
         } catch (error) {
             console.error("Login error:", error);
-            return false;
+            return { success: false };
         }
     };
 

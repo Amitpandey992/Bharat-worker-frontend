@@ -47,7 +47,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
     const navigation: MenuItem[] = [
         {
             name: "User Management",
-            href: "/user",
+            href: "/customerlist",
             icon: <Users className="h-5 w-5" />,
             role: "admin",
             subItems: [
@@ -64,8 +64,6 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                     icon: <Users className="h-4 w-4" />,
                     role: "admin",
                 },
-
-            
             ],
         },
         {
@@ -94,25 +92,25 @@ const Sidebar = ({ onClose }: SidebarProps) => {
         );
     };
 
-    useEffect(() => {
-        const updatedOpenMenus = openMenus.filter((menuName) => {
-            const item = navigation.find((nav) => nav.name === menuName);
-            if (item?.subItems) {
-                return isSubActive(item.subItems);
-            }
-            return false;
-        });
+    const isSubActive = (subPaths: SubMenuItem[]) => {
+        return subPaths.some((sub) => location.pathname.startsWith(sub.href));
+    };
 
-        if (updatedOpenMenus.length !== openMenus.length) {
-            setOpenMenus(updatedOpenMenus);
-        }
+    const isMenuActive = (item: MenuItem) => {
+        if (item.href && location.pathname === item.href) return true;
+        if (item.subItems && isSubActive(item.subItems)) return true;
+        return false;
+    };
+
+    useEffect(() => {
+        const expandedMenus = navigation
+            .filter((item) => item.subItems && isSubActive(item.subItems))
+            .map((item) => item.name);
+        setOpenMenus(expandedMenus);
     }, [location.pathname]);
 
     const isMenuOpen = (menuName: string) => {
         return openMenus.includes(menuName);
-    };
-    const isSubActive = (subPaths: SubMenuItem[]) => {
-        return subPaths.some((sub) => location.pathname.startsWith(sub.href));
     };
 
     const filteredNavigation = navigation.filter(
@@ -151,7 +149,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                                     onClick={() => toggleMenu(item.name)}
                                     className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium
                     ${
-                        isMenuOpen(item.name)
+                        isMenuOpen(item.name) || isMenuActive(item)
                             ? "text-blue-300 bg-blue/10"
                             : "text-gray-100 hover:bg-blue/5 hover:text-blue-300"
                     }`}

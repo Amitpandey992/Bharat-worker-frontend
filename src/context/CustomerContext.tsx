@@ -1,4 +1,5 @@
 import { CustomerService } from "@/services/customer.service";
+import { BookingListForACustomer } from "@/shared/types";
 import { createContext, useContext, ReactNode, useState } from "react";
 
 interface CustomerContextType {
@@ -11,8 +12,12 @@ interface CustomerContextType {
     }) => Promise<void>;
     services: any[];
     fetchAllServices: () => Promise<void>;
-    getAllBookingByACustomer: (id: string) => Promise<void>;
-    // customerBookingList:
+    getAllBookingByACustomer: (
+        id: string,
+        currentPage: number,
+        pageSize: number
+    ) => Promise<void>;
+    customerBookingList: BookingListForACustomer | null;
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(
@@ -22,6 +27,8 @@ const CustomerContext = createContext<CustomerContextType | undefined>(
 export function CustomerProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
     const [services, setServices] = useState([]);
+    const [customerBookingList, setCustomerBookingList] =
+        useState<BookingListForACustomer | null>(null);
 
     const createNewBooking = async (data: {
         service: string;
@@ -53,7 +60,27 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const getAllBookingByACustomer = async () => {};
+    const getAllBookingByACustomer = async (
+        id: string,
+        currentPage: number,
+        pageSize: number
+    ) => {
+        setIsLoading(true);
+        try {
+            const response = await CustomerService.getAllBookingByCustomer(
+                id,
+                currentPage,
+                pageSize
+            );
+            console.log(response.data, "////////");
+            setCustomerBookingList(response.data);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <CustomerContext.Provider
@@ -63,6 +90,7 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
                 services,
                 fetchAllServices,
                 getAllBookingByACustomer,
+                customerBookingList,
             }}
         >
             {children}

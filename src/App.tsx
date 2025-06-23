@@ -16,7 +16,6 @@ import PartnerDetails from "./pages/Admin/PartnerDetails";
 import BookingList from "./pages/Customer/BookingList";
 function App() {
     const { user, token } = useAuth();
-console.log(user)
     return (
         <BrowserRouter>
             <Routes>
@@ -27,7 +26,7 @@ console.log(user)
                             user?.role === "admin" ? (
                                 <Navigate to="/customerlist" replace />
                             ) : user?.role === "customer" ? (
-                                <Navigate to="/create-service" replace />
+                                <Navigate to="/bookingList" replace />
                             ) : (
                                 <Navigate to="/view-job" replace />
                             )
@@ -62,9 +61,8 @@ console.log(user)
                             <Route
                                 path="/customerDetails/:id"
                                 element={<CustomerDetails />}
-                               
                             />
-                              <Route
+                            <Route
                                 path="/partnerDetails/:id"
                                 element={<PartnerDetails />}
                             />

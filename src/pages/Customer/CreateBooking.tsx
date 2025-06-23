@@ -24,7 +24,7 @@ function CreateBooking() {
         useCustomer();
     const [coords, setCoords] = useState({ lat: 0, lng: 0 });
     const [addressViaAutoComplete, setAddressViaAutoComplete] = useState("");
-    const [addressViaGeoLocation, setAddressViaGeoLocation] = useState("");
+    // const [addressViaGeoLocation, setAddressViaGeoLocation] = useState("");
     const autocompleteRef = useRef<HTMLInputElement>(null);
     const [data, setData] = useState<{
         service: string;
@@ -40,8 +40,6 @@ function CreateBooking() {
     const [loading, setLoading] = useState(false);
 
     const createBooking = async () => {
-        setLoading(true);
-
         const location = addressViaAutoComplete;
         if (!data.service || !data.timeSlot || !data.totalAmount || !location) {
             toast({
@@ -62,6 +60,7 @@ function CreateBooking() {
         }
 
         try {
+            setLoading(true);
             await createNewBooking({
                 service: data.service,
                 timeSlot: data.timeSlot,
@@ -255,6 +254,9 @@ function CreateBooking() {
                             type="number"
                             placeholder="Enter amount..."
                             value={data.totalAmount || ""}
+                            onWheel={(e) =>
+                                (e.target as HTMLInputElement).blur()
+                            }
                             onChange={(e) =>
                                 setData((prev) => ({
                                     ...prev,
@@ -271,15 +273,15 @@ function CreateBooking() {
                             ref={autocompleteRef}
                             apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
                             onPlaceSelected={(place) => {
-                                if (addressViaGeoLocation) {
-                                    toast({
-                                        title: "Location already selected",
-                                        description:
-                                            "Please clear the geolocation first to use autocomplete.",
-                                        variant: "destructive",
-                                    });
-                                    return;
-                                }
+                                // if (addressViaGeoLocation) {
+                                //     toast({
+                                //         title: "Location already selected",
+                                //         description:
+                                //             "Please clear the geolocation first to use autocomplete.",
+                                //         variant: "destructive",
+                                //     });
+                                //     return;
+                                // }
 
                                 const city = place?.formatted_address || "";
                                 setAddressViaAutoComplete(city);
@@ -317,7 +319,7 @@ function CreateBooking() {
                             }}
                         />
                     </div>
-                    {addressViaGeoLocation === "" && addressViaAutoComplete && (
+                    {addressViaAutoComplete && (
                         <div className="space-y-2 bg-background mt-2 p-2 text-foreground text-sm flex justify-between w-[50vw] text-nowrap">
                             {addressViaAutoComplete}
                             <X
