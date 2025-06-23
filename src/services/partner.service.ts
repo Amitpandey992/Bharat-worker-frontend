@@ -53,4 +53,22 @@ export class PartnerService {
         }
     }
 
+    static async getPartner(id: string): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.get(
+                `/partner/getPartner/${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem("token") || "''"
+                        )}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            throw new Error("Error fetching customer");
+        }
+    }
 }
