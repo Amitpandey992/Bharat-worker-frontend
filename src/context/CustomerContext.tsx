@@ -12,7 +12,7 @@ interface CustomerContextType {
     services: any[];
     fetchAllServices: () => Promise<void>;
     getAllBookingByACustomer: (id: string) => Promise<void>;
-    // customerBookingList: 
+    // customerBookingList:
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(
@@ -53,9 +53,7 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const getAllBookingByACustomer = async () => {
-
-    }
+    const getAllBookingByACustomer = async () => {};
 
     return (
         <CustomerContext.Provider
@@ -64,7 +62,7 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
                 createNewBooking,
                 services,
                 fetchAllServices,
-                getAllBookingByACustomer
+                getAllBookingByACustomer,
             }}
         >
             {children}
