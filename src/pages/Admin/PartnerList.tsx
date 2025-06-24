@@ -91,7 +91,7 @@ const PartnerList: React.FC = () => {
 
 
         <CardContent>
-          {partnerData.partners.length === 0 ? (
+          {partnerData?.partners.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground text-lg">No partners found.</div>
           ) : (
             <Table
@@ -100,8 +100,8 @@ const PartnerList: React.FC = () => {
                 currentPage: paginationData.currentPage,
                 onPageChange: (page) =>
                   setPaginationData((prev) => ({ ...prev, currentPage: page })),
-                totalItems: partnerData.pagination.totalItems,
-                totalPages: partnerData.pagination.totalPages,
+                totalItems: partnerData?.pagination.totalItems || 0,
+                totalPages: partnerData?.pagination.totalPages || 0,
               }}
             >
               <TableHeader>
@@ -115,7 +115,7 @@ const PartnerList: React.FC = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {partnerData.partners.map((partner) => (
+                {partnerData?.partners.map((partner: any) => (
                   <TableRow key={partner._id}>
                     <TableCell>
                       <div className="flex items-center space-x-3">

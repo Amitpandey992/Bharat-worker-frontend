@@ -68,6 +68,13 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                     icon: <Users className="h-4 w-4" />,
                     role: "admin",
                 },
+
+                 {
+                    name: "Booking List",
+                    href: "/adminBookingList",
+                    icon: <Users className="h-4 w-4" />,
+                    role: "admin",
+                },
             ],
         },
         {

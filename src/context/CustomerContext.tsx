@@ -72,7 +72,6 @@ export function CustomerProvider({ children }: { children: ReactNode }) {
                 currentPage,
                 pageSize
             );
-            console.log(response.data, "////////");
             setCustomerBookingList(response.data);
         } catch (error) {
             console.error(error);

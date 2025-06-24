@@ -55,7 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const loginResponse = await AuthService.login({ email, password });
             if (loginResponse && loginResponse.success) {
                 const userData = loginResponse.data;
-                console.log(loginResponse.message);
+               
                 localStorage.setItem("token", JSON.stringify(userData.token));
                 localStorage.setItem("user", JSON.stringify(userData.user));
 
@@ -68,7 +68,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 loginResponse.message ===
                     "Account is deactivated. Please contact admin."
             ) {
-                console.log(loginResponse.message);
                 return { success: false, deactivated: true };
             }
             return { success: false };
