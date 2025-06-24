@@ -10,14 +10,13 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { PaginatedResponse } from "@/shared/interfaces";
-import { useCustomer } from "@/context/CustomerContext";
 import { useAuth } from "@/context/AuthContext";
+import { usePartner } from "@/context/PartnerContext";
 
-const BookingList = () => {
-  
-    const { getAllBookingByACustomer, isLoading, customerBookingList } =
-        useCustomer();
+const PartnerJobList = () => {
     const { user } = useAuth();
+    const { fetchPartnerBookings, isLoading, fetchAllBookingOfAPartner } =
+        usePartner();
     const [paginationData, setPaginationData] = useState<PaginatedResponse>({
         currentPage: 1,
         pageSize: 10,
@@ -31,10 +30,10 @@ const BookingList = () => {
     }
 
     useEffect(() => {
-        getAllBookingByACustomer(
-            user?.id,
+        fetchAllBookingOfAPartner(
             paginationData.currentPage,
-            paginationData.pageSize
+            paginationData.pageSize,
+            user.id
         );
     }, []);
 
@@ -44,7 +43,7 @@ const BookingList = () => {
                 <div className="flex flex-col items-center space-y-4">
                     <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
                     <p className="text-lg text-muted-foreground">
-                        Loading customer bookings...
+                        Loading your bookings...
                     </p>
                 </div>
             </div>
@@ -60,11 +59,11 @@ const BookingList = () => {
         >
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle>Booking List</CardTitle>
+                    <CardTitle>Your Bookings</CardTitle>
                 </CardHeader>
 
                 <CardContent>
-                    {customerBookingList?.bookings.length === 0 ? (
+                    {fetchPartnerBookings?.bookings.length === 0 ? (
                         <div className="text-center py-12 text-muted-foreground text-lg">
                             No Bookings found.
                         </div>
@@ -80,18 +79,19 @@ const BookingList = () => {
                                     }));
                                 },
                                 totalItems:
-                                    customerBookingList?.pagination
+                                    fetchPartnerBookings?.pagination
                                         .totalItems ?? 0,
                                 totalPages:
-                                    customerBookingList?.pagination
+                                    fetchPartnerBookings?.pagination
                                         .totalPages ?? 0,
                             }}
                         >
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Partner Name</TableHead>
                                     <TableHead>Service Name</TableHead>
-                                    <TableHead>Status</TableHead>
+                                    <TableHead>Customer Name</TableHead>
+                                    <TableHead>Customer Phone</TableHead>
+                                    <TableHead>Booking status</TableHead>
                                     <TableHead>Time slot</TableHead>
 
                                     <TableHead>Location</TableHead>
@@ -100,22 +100,20 @@ const BookingList = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {customerBookingList &&
-                                    customerBookingList?.bookings.map(
+                                {fetchPartnerBookings &&
+                                    fetchPartnerBookings?.bookings.map(
                                         (booking) => (
                                             <TableRow key={booking._id}>
                                                 <TableCell>
-                                                    <div className="flex items-center space-x-3">
-                                                        <span className="font-medium">
-                                                            {booking.partner
-                                                                ? booking.partner
-                                                                : "No partner assigned"}
-                                                        </span>
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>
                                                     {booking.service?.name}
                                                 </TableCell>
+                                                <TableCell>
+                                                    {booking.customer?.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.customer?.phone}
+                                                </TableCell>
+
                                                 <TableCell>
                                                     {booking.status}
                                                 </TableCell>
@@ -159,4 +157,4 @@ const BookingList = () => {
     );
 };
 
-export default BookingList;
+export default PartnerJobList;

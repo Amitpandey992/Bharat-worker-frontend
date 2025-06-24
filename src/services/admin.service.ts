@@ -9,7 +9,7 @@ export class AdminService {
         pageSize: number
     ): Promise<GenericResponse<any>> {
         try {
-            const res = await axiosInstance.get(
+            const response = await axiosInstance.get(
                 `/customer/getCustomers?currentPage=${currentPage}&pageSize=${pageSize}`,
                 {
                     headers: {
@@ -19,7 +19,7 @@ export class AdminService {
                     },
                 }
             );
-            return res.data;
+            return response.data;
         } catch (error) {
             console.error(error);
             throw new Error("Error during fetching all users data");
@@ -28,27 +28,8 @@ export class AdminService {
 
     static async addCustomer(payload: any): Promise<GenericResponse<any>> {
         try {
-            const res = await axiosInstance.post("/auth/register", payload, {
-                headers: {
-                    Authorization: `Bearer ${JSON.parse(
-                        localStorage.getItem("token") || "''"
-                    )}`,
-                },
-            });
-            return res.data;
-        } catch (error) {
-            console.error(error);
-            throw new Error("Error during user registration");
-        }
-    }
-
-    static async updateCustomer(
-        userId: string,
-        payload: any
-    ): Promise<GenericResponse<any>> {
-        try {
-            const res = await axiosInstance.put(
-                `/user/update/${userId}`,
+            const response = await axiosInstance.post(
+                "/auth/register",
                 payload,
                 {
                     headers: {
@@ -58,10 +39,41 @@ export class AdminService {
                     },
                 }
             );
-            return res.data;
-        } catch (error) {
-            console.error(error);
-            throw new Error("Error during user update");
+            return response.data;
+        } catch (error: any) {
+            console.error(error?.response?.data?.message);
+            return {
+                success: false,
+                data: null,
+                message: error?.response?.data?.message,
+            };
+        }
+    }
+
+    static async updateCustomer(
+        userId: string,
+        payload: any
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.put(
+                `/admin/update/${userId}`,
+                payload,
+                {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem("token") || "''"
+                        )}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error: any) {
+            console.error(error?.response?.data?.message);
+            return {
+                success: false,
+                data: null,
+                message: error?.response?.data?.message,
+            };
         }
     }
 
@@ -69,8 +81,8 @@ export class AdminService {
         userId: string
     ): Promise<GenericResponse<any>> {
         try {
-            const res = await axiosInstance.put(
-                `/user/update/${userId}`,
+            const response = await axiosInstance.put(
+                `/admin/update/${userId}`,
                 { isActive: false },
                 {
                     headers: {
@@ -80,7 +92,7 @@ export class AdminService {
                     },
                 }
             );
-            return res.data;
+            return response.data;
         } catch (error) {
             console.error(error);
             throw new Error("Error during user deactivation");
@@ -106,13 +118,22 @@ export class AdminService {
         }
     }
 
-    static async getBookingsByCustomer(customerId: string): Promise<CustomerBookingList[]> {
+    static async getBookingsByCustomer(
+        customerId: string
+    ): Promise<CustomerBookingList[]> {
         try {
-            const response = await axiosInstance.get(`/booking/allbooking/customer/${customerId}`, {
-                headers: {
-                    Authorization: `Bearer ${JSON.parse(localStorage.getItem(Constants.LocalStorageSessionKey) || "''")}`,
-                },
-            });
+            const response = await axiosInstance.get(
+                `/booking/allbooking/customer/${customerId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem(
+                                Constants.LocalStorageSessionKey
+                            ) || "''"
+                        )}`,
+                    },
+                }
+            );
 
             return response.data;
         } catch (error) {

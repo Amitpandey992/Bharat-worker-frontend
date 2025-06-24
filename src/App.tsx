@@ -14,6 +14,7 @@ import ViewJobs from "./pages/Partner/ViewJobs";
 import PartnerList from "./pages/Admin/PartnerList";
 import PartnerDetails from "./pages/Admin/PartnerDetails";
 import BookingList from "./pages/Customer/BookingList";
+import PartnerJobList from "./pages/Partner/PartnerJobList";
 function App() {
     const { user, token } = useAuth();
     return (
@@ -28,7 +29,7 @@ function App() {
                             ) : user?.role === "customer" ? (
                                 <Navigate to="/bookingList" replace />
                             ) : (
-                                <Navigate to="/view-job" replace />
+                                <Navigate to="/partnerJobList" replace />
                             )
                         ) : (
                             <Login />
@@ -92,6 +93,10 @@ function App() {
                                 <Route
                                     path="/view-jobs"
                                     element={<ViewJobs />}
+                                />
+                                <Route
+                                    path="/partnerJobList"
+                                    element={<PartnerJobList />}
                                 />
                             </>
                         )

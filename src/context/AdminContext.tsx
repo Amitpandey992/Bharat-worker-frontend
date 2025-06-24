@@ -1,6 +1,6 @@
 import { AdminService } from "@/services/admin.service";
 import { PartnerService } from "@/services/partner.service";
-import { CustomerList, PartnerList } from "@/shared/types";
+import { CustomerList, PartnerList, GenericResponse } from "@/shared/types";
 import {
     createContext,
     useContext,
@@ -14,8 +14,11 @@ interface AdminContextType {
     customerData: CustomerList;
     setCustomerData: Dispatch<SetStateAction<CustomerList>>;
     fetchCustomerList: (currentPage: number, pageSize: number) => Promise<void>;
-    addCustomer: (payload: any) => Promise<void>;
-    updateCustomer: (userId: string, payload: any) => Promise<void>;
+    addCustomer: (payload: any) => Promise<GenericResponse<any>>;
+    updateCustomer: (
+        userId: string,
+        payload: any
+    ) => Promise<GenericResponse<any>>;
     deactivateCustomer: (userId: string) => Promise<void>;
     deactivatePartner: (userId: string) => Promise<void>;
     isLoading: boolean;
@@ -64,8 +67,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                 pageSize
             );
             setCustomerData(response.data);
-        } catch (error) {
-            console.error(error);
+        } catch (error: any) {
+            console.error(error.message);
+            throw error;
         } finally {
             setIsLoading(false);
         }
@@ -73,46 +77,75 @@ export function AdminProvider({ children }: { children: ReactNode }) {
 
     async function addCustomer(payload: any) {
         try {
-            setIsLoading(true);
-            await AdminService.addCustomer(payload);
-            await fetchCustomerList(
-                customerData.pagination.currentPage,
-                customerData.pagination.pageSize
-            );
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
+            const response = await AdminService.addCustomer(payload);
+            if (!response.success) {
+                return response; // Return backend error message
+            }
+            const newCustomer = response.data;
+            setCustomerData((prev: CustomerList) => ({
+                customers: [...prev.customers, newCustomer],
+                pagination: prev.pagination,
+            }));
+            return {
+                success: true,
+                data: newCustomer,
+                message: "Customer added successfully",
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                data: null,
+                message: error?.response?.data?.message || error.message,
+            };
         }
     }
 
-    async function updateCustomer(userId: string, payload: any) {
+    async function updateCustomer(
+        userId: string,
+        payload: any
+    ): Promise<GenericResponse<any>> {
         try {
-            setIsLoading(true);
-            await AdminService.updateCustomer(userId, payload);
-            await fetchCustomerList(
-                customerData.pagination.currentPage,
-                customerData.pagination.pageSize
-            );
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
+            const response = await AdminService.updateCustomer(userId, payload);
+
+            if (!response.success) {
+                return response;
+            }
+
+            const updatedCustomer = response.data;
+            setCustomerData((prev) => ({
+                ...prev,
+                customers: prev.customers.map((customer) =>
+                    customer.user._id === userId
+                        ? { ...customer, user: updatedCustomer }
+                        : customer
+                ),
+            }));
+
+            return {
+                success: true,
+                data: updatedCustomer,
+                message: "Customer updated successfully",
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                data: null,
+                message: error?.response?.data?.message || "An error occurred",
+            };
         }
     }
 
     async function deactivateCustomer(userId: string) {
         try {
-            setIsLoading(true);
-            await AdminService.deactivateCustomer(userId);
-            await fetchCustomerList(
-                customerData.pagination.currentPage,
-                customerData.pagination.pageSize
-            );
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setIsLoading(false);
+            const response = await AdminService.deactivateCustomer(userId);
+            const updatedCustomer = response.data;
+            setCustomerData((prev: CustomerList) => ({
+                customers: [...prev.customers, updatedCustomer],
+                pagination: prev.pagination,
+            }));
+        } catch (error: any) {
+            console.error(error.message);
+            throw error;
         }
     }
 
@@ -121,8 +154,12 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             setIsLoading(true);
             const response = await AdminService.getACustomer(id);
             return response;
-        } catch (error) {
-            console.error("error fetching customer from AdminContext", error);
+        } catch (error: any) {
+            console.error(
+                "error fetching customer from AdminContext",
+                error.message
+            );
+            throw error;
         } finally {
             setIsLoading(false);
         }

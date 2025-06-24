@@ -33,7 +33,7 @@ export default function Login() {
                 } else if (user?.role === "customer") {
                     navigate("/bookingList");
                 } else if (user?.role === "partner") {
-                    navigate("/view-jobs");
+                    navigate("/partnerJobList");
                 }
             } else if (result.deactivated) {
                 toast({

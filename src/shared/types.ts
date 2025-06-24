@@ -153,8 +153,8 @@ export type BookingListForACustomer = {
         };
         partner: string | null;
         service: {
-            _id: string,
-            name: string
+            _id: string;
+            name: string;
         };
         status: string;
         timeSlot: Date;
@@ -167,5 +167,59 @@ export type BookingListForACustomer = {
         pageSize: 10;
         totalItems: 6;
         totalPages: 1;
+    };
+};
+
+export type OpenBookingDataForPartner = {
+    _id: string;
+    customer: {
+        _id: string;
+        name: string;
+        email: string;
+        phone: string;
+    };
+    partner: string | null;
+    service: {
+        _id: string;
+        name: string;
+        description: string;
+    };
+    status: string;
+    timeSlot: string;
+    location: string;
+    totalAmount: number;
+    paymentStatus: string;
+    createdAt: string;
+    __v: number;
+}[];
+
+export type BookingDataForPartner = {
+    bookings: {
+        _id: string;
+        customer: {
+            _id: string;
+            name: string;
+            email: string;
+            phone: string;
+        };
+        partner: string | null;
+        service: {
+            _id: string;
+            name: string;
+            description: string;
+        };
+        status: string;
+        timeSlot: string;
+        location: string;
+        totalAmount: number;
+        paymentStatus: string;
+        createdAt: string;
+        __v: number;
+    }[];
+    pagination: {
+        currentPage: number;
+        pageSize: number;
+        totalItems: number;
+        totalPages: number;
     };
 };

@@ -34,7 +34,7 @@ const NotFound = () => {
                                 : token && user?.role === "customer"
                                 ? "/bookingList"
                                 : token && user?.role === "partner"
-                                ? "/view-jobs"
+                                ? "/partnerJobList"
                                 : "/login"
                         }
                     >

@@ -35,19 +35,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
     Select,
-    SelectGroup,
     SelectValue,
     SelectTrigger,
     SelectContent,
-    SelectLabel,
     SelectItem,
-    SelectSeparator,
-    SelectScrollUpButton,
-    SelectScrollDownButton,
 } from "@/components/ui/select";
 type CustomerItem = CustomerList["customers"][number];
 
 const CustomerListdata = () => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const [paginationData, setPaginationData] = useState<PaginatedResponse>({
         currentPage: 1,
         pageSize: 10,
@@ -107,54 +104,85 @@ const CustomerListdata = () => {
     };
 
     const saveNewCustomer = async () => {
-        if (editData) {
-            await updateCustomer(editData.user._id, formData);
+        setIsSubmitting(true);
 
+        try {
+            const { name, email, phone, password } = formData;
+            if (!name || !email || !phone) {
+                toast({
+                    title: "Error",
+                    description: "Please fill all the fields.",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            if (phone.length !== 10 || isNaN(Number(phone))) {
+                toast({
+                    title: "Invalid Phone Number",
+                    description: "Please enter a valid 10-digit number.",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            if (!email.includes("@")) {
+                toast({
+                    title: "Invalid Email",
+                    description: "Please enter a valid email address.",
+                    variant: "destructive",
+                });
+                return;
+            }
+            if (editData) {
+                const response = await updateCustomer(
+                    editData.user._id,
+                    formData
+                );
+                if (!response.success) {
+                    toast({
+                        title: "Error",
+                        description:
+                            response.message || "Something went wrong.",
+                        variant: "destructive",
+                    });
+                    return;
+                }
+                toast({
+                    title: "Success",
+                    description: "Customer details updated successfully.",
+                    variant: "default",
+                });
+            } else {
+                const response = await addCustomer(formData);
+                if (!response.success) {
+                    toast({
+                        title: "Error",
+                        description:
+                            response.message || "Something went wrong.",
+                        variant: "destructive",
+                    });
+                    return;
+                }
+                toast({
+                    title: "Success",
+                    description: "Customer added successfully.",
+                    variant: "default",
+                });
+            }
+
+            setDialogOpen(false);
+            resetForm();
+        } catch (error) {
+            console.error("Error saving customer:", error);
             toast({
-                title: `${formData.name} updated successfully`,
-                variant: "default",
-                duration: 3000,
+                title: "Error",
+                description: "Something went wrong while saving.",
+                variant: "destructive",
             });
-        } else {
-            if (
-                !formData.name ||
-                !formData.email ||
-                !formData.phone ||
-                !formData.password
-            ) {
-                toast({
-                    title: "Please fill all the fields",
-                    variant: "destructive",
-                });
-                return;
-            }
-
-            if (formData.phone.length !== 10 || isNaN(Number(formData.phone))) {
-                toast({
-                    title: "Please enter a valid 10-digit phone number",
-                    variant: "destructive",
-                });
-                return;
-            }
-
-            if (!formData.email.includes("@")) {
-                toast({
-                    title: "Please enter a valid email address",
-                    variant: "destructive",
-                });
-                return;
-            }
-
-            await addCustomer(formData);
-
-            toast({
-                title: "Customer added successfully",
-                variant: "default",
-            });
+        } finally {
+            setIsSubmitting(false);
         }
-
-        setDialogOpen(false);
-        resetForm();
     };
 
     const editCustomer = (userData: CustomerItem) => {
@@ -325,8 +353,19 @@ const CustomerListdata = () => {
                                     <Button
                                         className="bg-blue-600 text-white"
                                         onClick={saveNewCustomer}
+                                        disabled={isSubmitting}
                                     >
-                                        {editData ? "Update" : "Add"} Customer
+                                        {isSubmitting ? (
+                                            <div className="flex items-center gap-2">
+                                                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                                                Saving...
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {editData ? "Update" : "Add"}{" "}
+                                                Customer
+                                            </>
+                                        )}
                                     </Button>
                                     <Dialog.Close asChild>
                                         <Button
@@ -414,12 +453,12 @@ const CustomerListdata = () => {
                                             <TableCell>
                                                 <span
                                                     className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                        userObj.user.isActive
+                                                        userObj.user?.isActive
                                                             ? "bg-green-100 text-green-700"
                                                             : "bg-red-100 text-red-700"
                                                     }`}
                                                 >
-                                                    {userObj.user.isActive
+                                                    {userObj.user?.isActive
                                                         ? "Active"
                                                         : "InActive"}
                                                 </span>

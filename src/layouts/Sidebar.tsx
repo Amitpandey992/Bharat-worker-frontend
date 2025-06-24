@@ -15,6 +15,10 @@ import {
     // Use
     Circle,
     FilePlus,
+    EyeIcon,
+    Upload,
+    ViewIcon,
+    List,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -77,6 +81,24 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             href: "/create-booking",
             icon: <FilePlus className="h-4 w-4" />,
             role: "customer",
+        },
+        {
+            name: "Your jobs",
+            href: "/partnerJobList",
+            icon: <List className="h-4 w-4" />,
+            role: "partner",
+        },
+        {
+            name: "View jobs",
+            href: "/view-jobs",
+            icon: <EyeIcon className="h-4 w-4" />,
+            role: "partner",
+        },
+        {
+            name: "Upload documents",
+            href: "/documentUpload",
+            icon: <Upload className="h-4 w-4" />,
+            role: "partner",
         },
     ];
 

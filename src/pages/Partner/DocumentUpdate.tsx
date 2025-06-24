@@ -1,157 +1,196 @@
 import React, { useState } from "react";
-import { Upload, X, Image } from "lucide-react";
-import {
-    DocumentType,
-    DocumentMap,
-    PreviewMap,
-    NameDocument,
-    DocumentUploadData,
-} from "@/shared/types";
+import { Upload, X, Image, Loader } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { motion } from "framer-motion";
+import { PartnerService } from "@/services/partner.service";
+import { useToast } from "@/components/ui/use-toast";
 
 function DocumentUpload() {
-    const [documents, setDocuments] = useState<DocumentMap>({
+    const [bookingLoading, setBookingLoading] = useState(false);
+    const { toast } = useToast();
+    const [files, setFiles] = useState<{
+        aadharFront: File | null;
+        aadharBack: File | null;
+        panFront: File | null;
+        panBack: File | null;
+        experienceCertificates: File[];
+    }>({
         aadharFront: null,
         aadharBack: null,
         panFront: null,
         panBack: null,
+        experienceCertificates: [],
     });
 
-    const [previews, setPreviews] = useState<PreviewMap>({
-        aadharFront: null,
-        aadharBack: null,
-        panFront: null,
-        panBack: null,
-    });
+    const [previews, setPreviews] = useState<{
+        [key: string]: string | null;
+    }>({});
 
-    const [nameDocs, setNameDocs] = useState<NameDocument[]>([
-        { id: Date.now(), file: null, preview: null },
-    ]);
-
-    const handleImageUpload = (
-        event: React.ChangeEvent<HTMLInputElement>,
-        type: DocumentType
+    const handleSingleFile = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        key: string
     ) => {
-        const file = event.target.files?.[0];
-        if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                if (e.target?.result) {
-                    setPreviews((prev) => ({
-                        ...prev,
-                        [type]: e.target?.result as string,
-                    }));
-                    setDocuments((prev) => ({ ...prev, [type]: file }));
-                }
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-    const removeImage = (type: DocumentType) => {
-        setDocuments((prev) => ({ ...prev, [type]: null }));
-        setPreviews((prev) => ({ ...prev, [type]: null }));
-        const input = document.getElementById(type) as HTMLInputElement;
-        if (input) input.value = "";
-    };
+        setFiles((prev) => ({ ...prev, [key]: file }));
 
-    const handleNameDocUpload = (
-        event: React.ChangeEvent<HTMLInputElement>,
-        index: number
-    ) => {
-        const file = event.target.files?.[0];
-        if (file && file.type.startsWith("image/")) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setNameDocs((prev) =>
-                    prev.map((doc, i) =>
-                        i === index
-                            ? {
-                                  ...doc,
-                                  file,
-                                  preview: e.target?.result as string,
-                              }
-                            : doc
-                    )
-                );
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    const removeNameDoc = (index: number) => {
-        setNameDocs((prev) => prev.filter((_, i) => i !== index));
-    };
-
-    const addNameDocField = () => {
-        setNameDocs((prev) => [
-            ...prev,
-            { id: Date.now(), file: null, preview: null },
-        ]);
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const payload: DocumentUploadData = {
-            documents,
-            nameDocs,
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreviews((prev) => ({
+                ...prev,
+                [key]: reader.result as string,
+            }));
         };
-
-        console.log("Form Submit Data:", payload);
-        alert("Documents submitted successfully!");
+        reader.readAsDataURL(file);
     };
 
-    const renderUploadField = (label: string, type: DocumentType) => (
-        <div className="space-y-2" key={type}>
-            <label
-                htmlFor={type}
+    const handleMultipleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newFiles = Array.from(e.target.files || []);
+        setFiles((prev) => ({
+            ...prev,
+            experienceCertificates: [
+                ...prev.experienceCertificates,
+                ...newFiles,
+            ],
+        }));
+        newFiles.forEach((file, idx) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreviews((prev) => ({
+                    ...prev,
+                    [`experience_${Date.now()}_${idx}`]:
+                        reader.result as string,
+                }));
+            };
+            reader.readAsDataURL(file);
+        });
+    };
+
+    const removeFile = (key: string) => {
+        setFiles((prev) => ({ ...prev, [key]: null }));
+        setPreviews((prev) => {
+            const copy = { ...prev };
+            delete copy[key];
+            return copy;
+        });
+    };
+
+    const removeExperienceFile = (index: number) => {
+        setFiles((prev) => {
+            const updated = [...prev.experienceCertificates];
+            updated.splice(index, 1);
+            return { ...prev, experienceCertificates: updated };
+        });
+    };
+
+    const handleSubmit = async () => {
+        const formData = new FormData();
+        if (
+            !files.aadharFront ||
+            !files.aadharBack ||
+            !files.panFront ||
+            !files.panBack
+        ) {
+            toast({
+                title: "Error Occurred",
+                description: "All Fields Are Required",
+                variant: "destructive",
+            });
+            return;
+        }
+        if (files.aadharFront)
+            formData.append("aadharFront", files.aadharFront);
+        if (files.aadharBack) formData.append("aadharBack", files.aadharBack);
+        if (files.panFront) formData.append("panFront", files.panFront);
+        if (files.panBack) formData.append("panBack", files.panBack);
+        files.experienceCertificates.forEach((file) => {
+            formData.append("experienceCertificates", file);
+        });
+
+        try {
+            setBookingLoading(true);
+            await PartnerService.uploadPartnerDocument(formData);
+            toast({
+                title: "Documents uploaded successfully!",
+                variant: "default",
+            });
+            setFiles({
+                aadharFront: null,
+                aadharBack: null,
+                panFront: null,
+                panBack: null,
+                experienceCertificates: [],
+            });
+        } catch (err: any) {
+            console.error(err);
+            toast({
+                title: "Upload failed.",
+                variant: "destructive",
+            });
+        } finally {
+            setBookingLoading(false);
+        }
+    };
+
+    const renderUploadBlock = (label: string, key: keyof typeof files) => (
+        <div className="space-y-3" key={key}>
+            <Label
+                htmlFor={key}
                 className="text-sm font-medium text-gray-700 block"
             >
                 {label}
-            </label>
-            {!previews[type] ? (
-                <div className="relative w-full max-w-sm">
-                    <input
-                        id={type}
+            </Label>
+            {!previews[key] ? (
+                <div className="relative">
+                    <Input
+                        id={key}
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleImageUpload(e, type)}
-                        className="absolute inset-0 w-[200] h-full opacity-0 cursor-pointer"
+                        onChange={(e) => handleSingleFile(e, key)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
-                    <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-gray-400 transition-colors">
-                        <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                        <p className="mt-4 text-sm text-gray-600">
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 bg-gray-50">
+                        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                        <p className="text-sm text-gray-600 mb-1">
                             <span className="font-medium text-blue-600 hover:text-blue-500">
                                 Click to upload
                             </span>{" "}
                             or drag and drop
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                            PNG, JPG, GIF up to 10MB
+                        <p className="text-xs text-gray-500">
+                            PNG, JPG, up to 10MB
                         </p>
                     </div>
                 </div>
             ) : (
                 <div className="relative">
-                    <div className="border border-gray-300 rounded-md p-2">
-                        <img
-                            src={previews[type]!}
-                            alt="Preview"
-                            className="w-full h-48 object-cover rounded"
-                        />
+                    <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
+                        <div className="flex justify-center">
+                            <img
+                                src={previews[key]!}
+                                alt="Preview"
+                                className="max-w-full max-h-80 object-contain rounded-md shadow-sm"
+                            />
+                        </div>
                     </div>
                     <Button
                         type="button"
-                        onClick={() => removeImage(type)}
-                        className="absolute top-2 right-2 text-white rounded-full p-2 "
+                        onClick={() => removeFile(key)}
+                        variant="destructive"
+                        size="sm"
+                        className="absolute -top-2 -right-2 h-8 w-8 rounded-full p-0 shadow-md"
                     >
-                        <X />
+                        <X className="h-4 w-4" />
                     </Button>
-                    <div className="mt-2 flex items-center text-sm text-gray-600">
-                        <Image className="h-4 w-4 mr-2" />
-                        {documents[type]?.name}
+                    <div className="mt-3 flex items-center text-sm text-gray-600 bg-gray-50 rounded-md p-3">
+                        <Image className="h-4 w-4 mr-2 text-gray-500" />
+                        <span className="truncate font-medium">
+                            {Array.isArray(files[key]) ? "" : files[key]?.name}
+                        </span>
                     </div>
                 </div>
             )}
@@ -159,95 +198,120 @@ function DocumentUpload() {
     );
 
     return (
-        <Card className="p-4">
-            <CardHeader>
-                <CardTitle className="text-2xl font-semibold text-gray-900">
-                    Upload Documents
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <form className="space-y-6" onSubmit={handleSubmit}>
-                    {renderUploadField("Aadhar Front", "aadharFront")}
-                    {renderUploadField("Aadhar Back", "aadharBack")}
-                    {renderUploadField("PAN Front", "panFront")}
-                    {renderUploadField("PAN Back", "panBack")}
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-6"
+        >
+            <Card className="shadow-lg">
+                <CardHeader className="pb-6">
+                    <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                        Upload Documents
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-8">
+                        <div className="space-y-6">
+                            {renderUploadBlock(
+                                "Aadhar Card - Front",
+                                "aadharFront"
+                            )}
+                            {renderUploadBlock(
+                                "Aadhar Card - Back",
+                                "aadharBack"
+                            )}
+                            {renderUploadBlock("PAN Card - Front", "panFront")}
+                            {renderUploadBlock("PAN Card - Back", "panBack")}
+                        </div>
 
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-gray-800">
-                            Experience Certificate Upload
-                        </h3>
-                        {nameDocs.map((doc, index) => (
-                            <div key={doc.id} className="space-y-2 relative">
-                                <label className="text-sm font-medium text-gray-700 block">
-                                    Document {index + 1}
-                                </label>
-                                {!doc.preview ? (
-                                    <div className="relative w-[600px]">
-                                        <input
-                                            type="file"
-                                            accept="image/*,application/pdf"
-                                            onChange={(e) =>
-                                                handleNameDocUpload(e, index)
-                                            }
-                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                                        />
-                                        <div className="border-2 border-dashed border-gray-300 rounded-md p-6 text-center hover:border-gray-400 transition-colors">
-                                            <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                                            <p className="mt-4 text-sm text-gray-600">
-                                                <span className="font-medium text-blue-600 hover:text-blue-500">
-                                                    Click to upload
-                                                </span>{" "}
-                                                or drag and drop
-                                            </p>
-                                            <p className="text-xs text-gray-500 mt-1">
-                                                PNG, JPG, GIF, PDF up to 10MB
-                                            </p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="relative">
-                                        <div className="border border-gray-300 rounded-md p-2">
-                                            <img
-                                                src={doc.preview!}
-                                                alt="Preview"
-                                                className="w-full h-48 object-cover rounded"
-                                            />
-                                        </div>
-                                        <Button
-                                            type="button"
-                                            onClick={() => removeNameDoc(index)}
-                                            className="absolute top-2 right-2 text-white rounded-full p-3"
-                                        >
-                                            <X className="h-4 w-4" />
-                                        </Button>
-                                        <div className="mt-2 flex items-center text-sm text-gray-600">
-                                            <Image className="h-4 w-4 mr-2" />
-                                            {doc.file?.name}
-                                        </div>
-                                    </div>
-                                )}
+                        {/* Experience Documents */}
+                        <div className="space-y-6">
+                            <div className="border-b border-gray-200 pb-2">
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                    Experience Certificates
+                                </h3>
                             </div>
-                        ))}
-                        <Button
-                            variant="ghost"
-                            type="button"
-                            onClick={addNameDocField}
-                            className="text-blue-600 hover:text-blue-800 text-sm font-medium mt-2"
-                        >
-                            + Add another document
-                        </Button>
+                            <div className="space-y-6">
+                                {files.experienceCertificates.map(
+                                    (file, index) => (
+                                        <div key={index} className="relative">
+                                            <div className="border border-gray-200 rounded-lg p-4 bg-white shadow-sm">
+                                                <div className="flex justify-center">
+                                                    <img
+                                                        src={
+                                                            previews[
+                                                                Object.keys(
+                                                                    previews
+                                                                )[index]
+                                                            ]!
+                                                        }
+                                                        alt="Preview"
+                                                        className="max-w-full max-h-80 object-contain rounded-md shadow-sm"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                onClick={() =>
+                                                    removeExperienceFile(index)
+                                                }
+                                                variant="destructive"
+                                                size="sm"
+                                                className="absolute -top-2 -right-2 h-8 w-8 rounded-full p-0 shadow-md"
+                                            >
+                                                <X className="h-4 w-4" />
+                                            </Button>
+                                            <div className="mt-3 flex items-center text-sm text-gray-600 bg-gray-50 rounded-md p-3">
+                                                <Image className="h-4 w-4 mr-2 text-gray-500" />
+                                                <span className="truncate font-medium">
+                                                    {file.name}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    )
+                                )}
+
+                                <div className="relative">
+                                    <Input
+                                        type="file"
+                                        accept="image/*,application/pdf"
+                                        multiple
+                                        onChange={handleMultipleFiles}
+                                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    />
+                                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 hover:bg-blue-50 transition-all duration-200 bg-gray-50">
+                                        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                                        <p className="text-sm text-gray-600 mb-1">
+                                            <span className="font-medium text-blue-600 hover:text-blue-500">
+                                                Click to upload
+                                            </span>{" "}
+                                            or drag and drop
+                                        </p>
+                                        <p className="text-xs text-gray-500">
+                                            PNG, JPG, PDF up to 10MB
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end pt-6 border-t border-gray-200">
+                            <Button
+                                onClick={handleSubmit}
+                                className="px-8 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm"
+                            >
+                                {bookingLoading ? (
+                                    <Loader className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    "Submit"
+                                )}
+                            </Button>
+                        </div>
                     </div>
-                    <div className="flex justify-end">
-                        <Button
-                            type="submit"
-                            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md"
-                        >
-                            Submit
-                        </Button>
-                    </div>
-                </form>
-            </CardContent>
-        </Card>
+                </CardContent>
+            </Card>
+        </motion.div>
     );
 }
 

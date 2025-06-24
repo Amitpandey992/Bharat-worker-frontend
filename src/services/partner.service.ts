@@ -72,5 +72,89 @@ export class PartnerService {
         }
     }
 
-    
+    static async showOpenJobsToPartner(): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.get("/booking/open", {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(
+                        localStorage.getItem("token") || "''"
+                    )}`,
+                },
+            });
+            return response.data;
+        } catch (error: any) {
+            console.error(error.message);
+            throw new Error("Error fetching open booking");
+        }
+    }
+
+    static async acceptBooking(
+        id: string,
+        partnerId: string
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.patch(
+                `/booking/${id}/accept`,
+                { partnerId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem("token") || "''"
+                        )}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error: any) {
+            console.error(error.message);
+            throw new Error("Error accepting open booking");
+        }
+    }
+
+    static async fetchBookingOfAPartner(
+        currentPage: number,
+        pageSize: number,
+        id: string
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.post(
+                `/booking/getbooking?currentPage=${currentPage}&pageSize=${pageSize}`,
+                { partnerId: id },
+                {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem("token") || "''"
+                        )}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error: any) {
+            console.error(error.message);
+            throw new Error("Error fetching booking of a partner");
+        }
+    }
+
+    static async uploadPartnerDocument(
+        data: FormData
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.post(
+                "partner/upload-docs",
+                data,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem("token") || "''"
+                        )}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error: any) {
+            console.error(error.message);
+            throw new Error("Error uploading partner document");
+        }
+    }
 }
