@@ -75,16 +75,16 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    async function addCustomer(payload: any) {
+    async function addCustomer(payload: any): Promise<GenericResponse<any>> {
         try {
             const response = await AdminService.addCustomer(payload);
             if (!response.success) {
-                return response; // Return backend error message
+                return response;
             }
             const newCustomer = response.data;
-            setCustomerData((prev: CustomerList) => ({
+            setCustomerData((prev) => ({
+                ...prev,
                 customers: [...prev.customers, newCustomer],
-                pagination: prev.pagination,
             }));
             return {
                 success: true,
@@ -139,9 +139,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         try {
             const response = await AdminService.deactivateCustomer(userId);
             const updatedCustomer = response.data;
-            setCustomerData((prev: CustomerList) => ({
-                customers: [...prev.customers, updatedCustomer],
-                pagination: prev.pagination,
+            setCustomerData((prev) => ({
+                ...prev,
+                customers: prev.customers.map((c) =>
+                    c.user._id === userId
+                        ? { ...c, user: updatedCustomer }
+                        : c
+                ),
             }));
         } catch (error: any) {
             console.error(error.message);
