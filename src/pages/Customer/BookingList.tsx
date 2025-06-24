@@ -107,8 +107,8 @@ const BookingList = () => {
                                                 <TableCell>
                                                     <div className="flex items-center space-x-3">
                                                         <span className="font-medium">
-                                                            {booking.partner
-                                                                ? booking.partner
+                                                            {booking?.partner
+                                                                ? booking?.partner
                                                                 : "No partner assigned"}
                                                         </span>
                                                     </div>

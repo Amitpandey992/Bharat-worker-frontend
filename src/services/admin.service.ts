@@ -4,6 +4,7 @@ import { CustomerBookingList } from "@/shared/types";
 import { GenericResponse } from "@/shared/types";
 
 export class AdminService {
+
     static async customerList(
         currentPage: number,
         pageSize: number
@@ -119,26 +120,27 @@ export class AdminService {
     }
 
     static async getBookingsByCustomer(
-        customerId: string
-    ): Promise<CustomerBookingList[]> {
+        id: string, 
+        currentPage: number, 
+        pageSize: number)
+    : Promise<GenericResponse<any>> {
         try {
-            const response = await axiosInstance.get(
-                `/booking/allbooking/customer/${customerId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${JSON.parse(
-                            localStorage.getItem(
-                                Constants.LocalStorageSessionKey
-                            ) || "''"
+            const response = await axiosInstance.get
+            (`/booking/allbooking/customer/${id}?currentPage=${currentPage}&pageSize=${pageSize}`, {
+
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(
+                       localStorage.getItem("token") || "''"
                         )}`,
                     },
-                }
-            );
+            });
 
-            return response.data;
+        return response.data;
         } catch (error) {
             console.error("Error fetching bookings", error);
             throw new Error("Error fetching booking history");
         }
     }
 }
+
+

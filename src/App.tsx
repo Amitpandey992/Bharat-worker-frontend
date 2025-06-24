@@ -15,6 +15,8 @@ import PartnerList from "./pages/Admin/PartnerList";
 import PartnerDetails from "./pages/Admin/PartnerDetails";
 import BookingList from "./pages/Customer/BookingList";
 import PartnerJobList from "./pages/Partner/PartnerJobList";
+import Skills from "./pages/Partner/Skills";
+import AdminBookingList from "./pages/Admin/AdminBookingList";
 function App() {
     const { user, token } = useAuth();
     return (
@@ -66,6 +68,14 @@ function App() {
                             <Route
                                 path="/partnerDetails/:id"
                                 element={<PartnerDetails />}
+                            />
+                             <Route
+                                path="/skills"
+                                element={<Skills />}
+                            />
+                            <Route
+                                path="/adminBookingList"
+                                element={<AdminBookingList />}
                             />
                         </>
                     ) : user?.role === "customer" ? (
