@@ -1,8 +1,19 @@
-import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import * as Dialog from "@radix-ui/react-dialog";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,DropdownMenuSeparator
+} from "@radix-ui/react-dropdown-menu";
+import {
+    Dialog,
+    DialogPortal,
+    DialogOverlay,
+    DialogClose,
+    DialogContent
+} from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, Wrench, X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -77,27 +88,27 @@ const Skills = () => {
           <CardTitle>Add Your Skills</CardTitle>
         </CardHeader>
         <CardContent >
-          <DropdownMenu.Root >
-            <DropdownMenu.Trigger asChild>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button variant="outline" className="min-w-[600px] min-h-[60px] justify-between">
                 {selectedSkill?.name || "Select Skill"}
                 <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
               side="bottom"
               align="start"
               className="z-50 min-w-[600px] rounded-md border bg-white p-2 shadow-lg"
             >
-              <DropdownMenu.Separator className="my-1 border-t border-gray-200" />
-              <DropdownMenu.Item
+              <DropdownMenuSeparator className="my-1 border-t border-gray-200" />
+              <DropdownMenuItem
                 onSelect={() => setIsAddSkillOpen(true)}
                 className="text-sm text-center cursor-pointer py-1 hover:bg-blue-50 rounded-md"
               >
                 + Add New Skill
-              </DropdownMenu.Item>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {skills.length > 0 && (
         // <Card>
       
@@ -147,17 +158,17 @@ const Skills = () => {
       {/* Skills List Outside Dropdown */}
       
       {/* Add Skill Dialog */}
-      <Dialog.Root open={isAddSkillOpen} onOpenChange={setIsAddSkillOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg z-50 space-y-4">
+      <Dialog open={isAddSkillOpen} onOpenChange={setIsAddSkillOpen}>
+        <DialogPortal>
+          <DialogOverlay className="fixed inset-0 bg-black/30" />
+          <DialogContent className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg z-50 space-y-4">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">Add New Skill</h2>
-              <Dialog.Close asChild>
+              <DialogClose asChild>
                 <button>
                   <X className="h-5 w-5 text-gray-500" />
                 </button>
-              </Dialog.Close>
+              </DialogClose>
             </div>
 
             <input
@@ -165,69 +176,69 @@ const Skills = () => {
               placeholder="Skill Name"
               value={newSkill}
               onChange={(e) => setNewSkill(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rflex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
             <input
               type="number"
               placeholder="Experience (Years)"
               value={newSkillExp}
               onChange={(e) => setNewSkillExp(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rflex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
 
             <div className="flex justify-end gap-2">
-              <Dialog.Close asChild>
+              <DialogClose asChild>
                 <Button variant="outline">Cancel</Button>
-              </Dialog.Close>
+              </DialogClose>
               <Button onClick={handleAdd}>Add Skill</Button>
             </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
 
       {/* Update Dialog */}
-      <Dialog.Root open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 space-y-4 z-50">
+      <Dialog open={isUpdateDialogOpen} onOpenChange={setIsUpdateDialogOpen}>
+        <DialogPortal>
+          <DialogOverlay className="fixed inset-0 bg-black/30" />
+          <DialogContent className="fixed left-1/2 top-1/2 w-full max-w-md -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 space-y-4 z-50">
             <h2 className="text-lg font-semibold mb-2">Update Skill</h2>
 
             <input
               type="text"
               value={updatedSkill}
               onChange={(e) => setUpdatedSkill(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rflex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
             <input
               type="text"
               value={updatedExperience}
               onChange={(e) => setUpdatedExperience(e.target.value)}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="w-full rflex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             />
 
             <div className="flex justify-end gap-2">
-              <Dialog.Close asChild><Button variant="outline">Cancel</Button></Dialog.Close>
+              <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
               <Button onClick={handleUpdate}>Update</Button>
             </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
 
       {/* Delete Dialog */}
-      <Dialog.Root open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-          <Dialog.Content className="fixed left-1/2 top-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 space-y-4 z-50">
+      <Dialog open={isDeleteConfirmOpen} onOpenChange={setIsDeleteConfirmOpen}>
+        <DialogPortal>
+          <DialogOverlay className="fixed inset-0 bg-black/30" />
+          <DialogContent className="fixed left-1/2 top-1/2 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-lg p-6 space-y-4 z-50">
             <p className="text-sm">
               Are you sure you want to delete <strong>{selectedSkill?.name}</strong>?
             </p>
             <div className="flex justify-end gap-2">
-              <Dialog.Close asChild><Button variant="outline">Cancel</Button></Dialog.Close>
+              <DialogClose asChild><Button variant="outline">Cancel</Button></DialogClose>
               <Button variant="destructive" onClick={handleDelete}>Yes, Delete</Button>
             </div>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
     </motion.div>
   );
 };

@@ -75,6 +75,12 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                     icon: <Users className="h-4 w-4" />,
                     role: "admin",
                 },
+                 {
+                    name: "Services",
+                    href: "/adminservices",
+                    icon: <Users className="h-4 w-4" />,
+                    role: "admin",
+                },
             ],
         },
         {

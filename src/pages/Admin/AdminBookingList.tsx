@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-import * as Dialog from "@radix-ui/react-dialog";
+import { Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogContent} from "@radix-ui/react-dialog";
 import {
     Card,
     CardContent,
@@ -25,7 +29,6 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useAdmin } from "@/context/AdminContext";
-// import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -36,6 +39,9 @@ import {
 const AdminBookinList = () => {
     const { isLoading } = useAdmin();
     const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
+    const [isAssignOpen, setAssignOpen] = useState(false);
+    const [isCancelOpen, setIsCancelOpen] = useState(false);
+
     if (isLoading) {
         return (
             <div className="flex h-full items-center justify-center">
@@ -62,29 +68,14 @@ const AdminBookinList = () => {
                 </CardHeader>
                 <CardContent>
                     <div className="overflow-x-auto">
-                        <Table
-                        //  pagination={{
-                        //         pageSize:pageSize,
-                        //         currentPage:currentPage,
-                        //         onPageChange: (page) => {
-                        //             setPaginationData((prev) => ({
-                        //                 ...prev,
-                        //                 currentPage: page,
-                        //             }));
-                        //         },
-                        //         totalItems:totalItems,
-                        //         totalPages: c,
-                            // }}
-                        
-                        >
+                        <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Partner Name</TableHead>
                                     <TableHead>Customer Name</TableHead>
                                     <TableHead>Partner Email</TableHead>
                                     <TableHead>Customer Email</TableHead>
-                                    {/* <TableHead>Partner Mobile No.</TableHead>
-                  <TableHead>Customer Mobile No.</TableHead> */}
+                        
                                     <TableHead>Service</TableHead>
                                     <TableHead>Status</TableHead>
                                     <TableHead>TimeSlot</TableHead>
@@ -108,7 +99,7 @@ const AdminBookinList = () => {
                                     <TableCell></TableCell>
                                     <TableCell></TableCell>
 
-                                    {/* Actions dropdown always in the last cell */}
+                                   
                                     <TableCell className="text-end">
                                         <DropdownMenu>
                                             <DropdownMenuTrigger asChild>
@@ -122,9 +113,10 @@ const AdminBookinList = () => {
                                                 className="w-[180px] rounded-md border bg-white p-2 shadow-md z-[999]"
                                             >
                                                 <DropdownMenuItem
+                                                    onClick={() => setAssignOpen(true)}
                                                     className="flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted text-nowrap"
                                                 >
-                                                    {/* <Edit className="mr-2 h-4 w-4" /> */}
+                                                    
                                                     <Settings2 className="mr-2 h-4 w-4" />
 
                                                     Assign
@@ -139,10 +131,11 @@ const AdminBookinList = () => {
                                                 </DropdownMenuItem>
 
                                                 <DropdownMenuItem
+                                                onClick={()=>setIsCancelOpen(true)}
                                                     className="flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted text-nowrap"
                                                 >
                                                     <Info className="mr-2 h-4 w-4" />
-                                                    {/* <Settings2 className="mr-2 h-4 w-4" /> */}
+                                                   
 
                                                     Cancel
                                                 </DropdownMenuItem>
@@ -163,40 +156,120 @@ const AdminBookinList = () => {
                             </TableBody>
 
                         </Table>
-                        <Dialog.Root open={isRescheduleOpen} onOpenChange={setIsRescheduleOpen}>
-                            <Dialog.Portal>
-                                <Dialog.Overlay className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
-                                <Dialog.Content className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg space-y-4">
-                                    <div className="flex justify-between items-center">
-                                        <h2 className="text-lg font-semibold">Reschedule Booking</h2>
-                                        <Dialog.Close asChild>
-                                            <button>
-                                                <X className="h-5 w-5 text-gray-500" />
-                                            </button>
-                                        </Dialog.Close>
-                                    </div>
+                        {/* ✅ Reschedule Dialog */}
+<Dialog open={isRescheduleOpen} onOpenChange={setIsRescheduleOpen}>
+    <DialogPortal>
+        <DialogOverlay className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
+        <DialogContent className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Reschedule Booking</h2>
+                <DialogClose asChild>
+                    <button>
+                        <X className="h-5 w-5 text-gray-500" />
+                    </button>
+                </DialogClose>
+            </div>
 
-                                    <input
-                                        type="datetime-local"
-                                        className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-                                    />
+            <input
+                type="datetime-local"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            />
 
-                                    <div className="flex justify-end gap-2">
-                                        <Dialog.Close asChild>
-                                            <Button variant="outline">Cancel</Button>
-                                        </Dialog.Close>
-                                        <Button
-                                            onClick={() => {
-                                                // ✅ Handle submit logic here
-                                                setIsRescheduleOpen(false);
-                                            }}
-                                        >
-                                            Confirm
-                                        </Button>
-                                    </div>
-                                </Dialog.Content>
-                            </Dialog.Portal>
-                        </Dialog.Root>
+            <div className="flex justify-end gap-2">
+                <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                    onClick={() => {
+                        // ✅ Handle submit logic here
+                        setIsRescheduleOpen(false);
+                    }}
+                >
+                    Confirm
+                </Button>
+            </div>
+        </DialogContent>
+    </DialogPortal>
+</Dialog>
+
+{/* ✅ Assign Dialog - fixed to use isAssignOpen */}
+<Dialog open={isAssignOpen} onOpenChange={setAssignOpen}>
+    <DialogPortal>
+        <DialogOverlay className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
+        <DialogContent className="fixed left-1/2 top-1/2 z-50 w-full max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Assign Booking</h2>
+                <DialogClose asChild>
+                    <button>
+                        <X className="h-5 w-5 text-gray-500" />
+                    </button>
+                </DialogClose>
+            </div>
+
+            <input
+                type="text"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Partner Name"
+            />
+            <input
+                type="text"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Customer Name"
+            />
+
+            <div className="flex justify-end gap-2">
+                <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button
+                    onClick={() => {
+                        // ✅ Handle submit logic here
+                        setAssignOpen(false);
+                    }}
+                >
+                    Confirm
+                </Button>
+            </div>
+        </DialogContent>
+    </DialogPortal>
+</Dialog>
+
+<Dialog open={isCancelOpen} onOpenChange={setIsCancelOpen}>
+    <DialogPortal>
+        <DialogOverlay className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40" />
+        <DialogContent className="fixed left-1/2 top-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-lg space-y-4">
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Cancel Booking</h2>
+                <DialogClose asChild>
+                    <button>
+                        <X className="h-5 w-5 text-gray-500" />
+                    </button>
+                </DialogClose>
+            </div>
+            <p className="text-sm text-muted-foreground">
+                Are you sure you want to cancel this booking? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+                <DialogClose asChild>
+                    <Button variant="outline">No</Button>
+                </DialogClose>
+                <Button
+                    variant="destructive"
+                    onClick={() => {
+                        // ✅ Handle cancel logic here
+                        console.log("Booking canceled");
+                        setIsCancelOpen(false);
+                    }}
+                >
+                    Yes, Cancel
+                </Button>
+            </div>
+        </DialogContent>
+    </DialogPortal>
+</Dialog>
+
+
+
                     </div>
                 </CardContent>
             </Card>

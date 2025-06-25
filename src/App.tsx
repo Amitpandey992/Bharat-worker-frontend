@@ -17,6 +17,7 @@ import BookingList from "./pages/Customer/BookingList";
 import PartnerJobList from "./pages/Partner/PartnerJobList";
 import Skills from "./pages/Partner/Skills";
 import AdminBookingList from "./pages/Admin/AdminBookingList";
+import Services from "./pages/Admin/Services";
 function App() {
     const { user, token } = useAuth();
     return (
@@ -77,6 +78,11 @@ function App() {
                                 path="/adminBookingList"
                                 element={<AdminBookingList />}
                             />
+                              <Route
+                                path="/adminServices"
+                                element={<Services />}
+                            />
+                            
                         </>
                     ) : user?.role === "customer" ? (
                         <>
