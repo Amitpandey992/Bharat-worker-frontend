@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Edit, Trash2, Search, X, Save, Clock } from "lucide-react";
+import { Plus, Edit, Trash2, X, Save, Clock } from "lucide-react";
 import { useAdmin } from "@/context/AdminContext";
 import { ServiceType } from "@/shared/types";
 import { Button } from "@/components/ui/button";
@@ -32,12 +32,14 @@ const Services = () => {
         categoryData,
         fechCategories,
         createService,
+        updateService,
+        deleteService,
     } = useAdmin();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<ServiceItem | null>(
         null
     );
-    const [searchTerm, setSearchTerm] = useState("");
+    // const [searchTerm, setSearchTerm] = useState("");
     const [formData, setFormData] = useState<{
         name: string;
         description: string;
@@ -47,7 +49,7 @@ const Services = () => {
         surgePricing: {
             enabled: boolean;
             surgeMultiplier: number;
-            surgeHours: string[];
+            surgeHours: { start: string; end: string }[];
         };
     }>({
         name: "",
@@ -61,10 +63,12 @@ const Services = () => {
         partnerCommissionRate: 0,
         surgePricing: {
             enabled: false,
-            surgeMultiplier: 2,
-            surgeHours: [],
+            surgeMultiplier: 0,
+            surgeHours: [{ start: "", end: "" }],
         },
     });
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [serviceToDelete, setServiceToDelete] = useState<ServiceItem | null>(null);
 
     useEffect(() => {
         fechCategories();
@@ -85,7 +89,7 @@ const Services = () => {
             surgePricing: {
                 enabled: false,
                 surgeMultiplier: 2,
-                surgeHours: [],
+                surgeHours: [{ start: "", end: "" }],
             },
         });
         setEditingService(null);
@@ -103,7 +107,10 @@ const Services = () => {
                     price: tier.price,
                 })),
                 partnerCommissionRate: service.partnerCommissionRate,
-                surgePricing: service.surgePricing,
+                surgePricing: {
+                    ...service.surgePricing,
+                    surgeHours: service.surgePricing.surgeHours ?? [],
+                },
             });
         } else {
             resetForm();
@@ -137,23 +144,25 @@ const Services = () => {
             return;
         }
 
-        // const now = new Date().toISOString();
-        // const serviceData: ServiceItem = {
-        //     ...formData,
-        //     category: selectedCategory,
-        //     pricingTiers: formData.pricingTiers.map((tier, i) => ({
-        //         ...tier,
-        //         _id: generateId(),
-        //     })),
-        //     _id: editingService ? editingService._id : generateId(),
-        //     createdAt: editingService ? editingService.createdAt : now,
-        //     updatedAt: now,
-        // };
-
         if (editingService) {
+            console.log("formData before update", formData);
+            await updateService(editingService._id, formData);
+            toast({
+                variant: "default",
+                title: "Updated!!!",
+                description: "Service Updated Successfully🎉",
+            });
         } else {
-            const respone = await createService(formData);
-            console.log(respone);
+            const payload = {
+                ...formData,
+                category: selectedCategory._id,
+            };
+            await createService(payload);
+            toast({
+                variant: "default",
+                title: "🎉",
+                description: "Service Created Successfully",
+            });
         }
 
         closeModal();
@@ -169,22 +178,29 @@ const Services = () => {
     //     );
     // });
     // console.log("searchTerm:", searchTerm);
-    console.log("serviceData:", serviceData);
     // console.log("filteredServices:", filteredServices);
+    console.log("serviceData:", serviceData);
 
     const addSurgeHour = () => {
         setFormData({
             ...formData,
             surgePricing: {
                 ...formData.surgePricing,
-                surgeHours: [...formData.surgePricing.surgeHours, ""],
+                surgeHours: [
+                    ...formData.surgePricing.surgeHours,
+                    { start: "", end: "" },
+                ],
             },
         });
     };
 
-    const updateSurgeHour = (index: number, value: string) => {
+    const updateSurgeHour = (
+        index: number,
+        field: "start" | "end",
+        value: string
+    ) => {
         const newSurgeHours = [...formData.surgePricing.surgeHours];
-        newSurgeHours[index] = value;
+        newSurgeHours[index][field] = value;
         setFormData({
             ...formData,
             surgePricing: {
@@ -452,7 +468,7 @@ const Services = () => {
                                                                     parseFloat(
                                                                         e.target
                                                                             .value
-                                                                    ) || 2,
+                                                                    ),
                                                             },
                                                         })
                                                     }
@@ -480,15 +496,38 @@ const Services = () => {
                                                                 className="flex gap-2"
                                                             >
                                                                 <Input
-                                                                    type="text"
-                                                                    placeholder="e.g., 18:00-21:00"
+                                                                    type="time"
                                                                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                                                    value={hour}
+                                                                    value={
+                                                                        hour.start
+                                                                    }
                                                                     onChange={(
                                                                         e
                                                                     ) =>
                                                                         updateSurgeHour(
                                                                             index,
+                                                                            "start",
+                                                                            e
+                                                                                .target
+                                                                                .value
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span className="self-center">
+                                                                    to
+                                                                </span>
+                                                                <Input
+                                                                    type="time"
+                                                                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                                                    value={
+                                                                        hour.end
+                                                                    }
+                                                                    onChange={(
+                                                                        e
+                                                                    ) =>
+                                                                        updateSurgeHour(
+                                                                            index,
+                                                                            "end",
                                                                             e
                                                                                 .target
                                                                                 .value
@@ -527,7 +566,7 @@ const Services = () => {
                                     </DialogClose>
                                     <Button
                                         type="button"
-                                        onClick={handleSubmit}
+                                        onClick={() => handleSubmit()}
                                         className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                                     >
                                         <Save className="w-4 h-4 mr-2" />
@@ -561,7 +600,7 @@ const Services = () => {
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                            {serviceData?.services.map((service) => (
+                            {serviceData.services?.map((service) => (
                                 <div
                                     key={service._id}
                                     className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
@@ -569,7 +608,7 @@ const Services = () => {
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
                                             <h3 className="text-xl font-semibold text-gray-900 capitalize">
-                                                {service.name}
+                                                {service?.name}
                                             </h3>
                                             <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
                                                 {service.category?.name}
@@ -585,15 +624,51 @@ const Services = () => {
                                             >
                                                 <Edit className="w-4 h-4" />
                                             </Button>
-                                            <Button
-                                                variant="ghost"
-                                                // onClick={() =>
-                                                //     deleteService(service._id)
-                                                // }
-                                                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
+                                            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                                <DialogTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        onClick={() => {
+                                                            setServiceToDelete(service);
+                                                            setDeleteDialogOpen(true);
+                                                        }}
+                                                        className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent>
+                                                    <DialogHeader>
+                                                        <DialogTitle>Delete Service</DialogTitle>
+                                                    </DialogHeader>
+                                                    <p>Are you sure you want to delete <b>{serviceToDelete?.name}</b>?</p>
+                                                    <DialogFooter>
+                                                        <Button
+                                                            variant="outline"
+                                                            onClick={() => setDeleteDialogOpen(false)}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            variant="destructive"
+                                                            onClick={async () => {
+                                                                if (serviceToDelete) {
+                                                                    await deleteService(serviceToDelete._id);
+                                                                    setDeleteDialogOpen(false);
+                                                                    setServiceToDelete(null);
+                                                                    toast({
+                                                                        variant: "default",
+                                                                        title: "Deleted!",
+                                                                        description: "Service deleted successfully.",
+                                                                    });
+                                                                }
+                                                            }}
+                                                        >
+                                                            Delete
+                                                        </Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
                                         </div>
                                     </div>
 

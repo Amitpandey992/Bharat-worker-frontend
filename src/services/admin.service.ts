@@ -110,9 +110,14 @@ export class AdminService {
                 }
             );
             return response.data;
-        } catch (error) {
-            console.error(error);
-            throw new Error("Error fetching customer");
+        } catch (error: any) {
+            console.error("Error fetching customer", error);
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error fetching customer",
+            };
         }
     }
 
@@ -134,9 +139,14 @@ export class AdminService {
             );
 
             return response.data;
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error fetching bookings", error);
-            throw new Error("Error fetching booking history");
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error fetching bookings",
+            };
         }
     }
 
@@ -150,9 +160,14 @@ export class AdminService {
                 },
             });
             return respones.data;
-        } catch (error) {
-            console.error("Error fetching services", error);
-            throw new Error("Error fetching services");
+        } catch (error: any) {
+            console.error("Error fetching service", error);
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error fetching service",
+            };
         }
     }
 
@@ -179,6 +194,51 @@ export class AdminService {
         }
     }
 
+    static async updateService(
+        id: string,
+        data: CreateServiceType
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.put(`services/${id}`, data, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(
+                        localStorage.getItem("token") || "''"
+                    )}`,
+                },
+            });
+            return response.data;
+        } catch (error: any) {
+            console.error("Error updating service", error);
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error updating service",
+            };
+        }
+    }
+
+    static async deleteService(id: string): Promise<GenericResponse<any>> {
+        try {
+            const respones = await axiosInstance.delete(`/services/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(
+                        localStorage.getItem("token") || "''"
+                    )}`,
+                },
+            });
+            return respones.data;
+        } catch (error: any) {
+            console.error("Error deleting service", error);
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error deleting service",
+            };
+        }
+    }
+
     static async fetchAllCategory(): Promise<GenericResponse<any>> {
         try {
             const response = await axiosInstance.get("/categories", {
@@ -189,9 +249,14 @@ export class AdminService {
                 },
             });
             return response.data;
-        } catch (error) {
-            console.error("Error fetching category", error);
-            throw new Error("Error fetching category");
+        } catch (error: any) {
+            console.error("Error fetching categories", error);
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error fetching categories",
+            };
         }
     }
 }

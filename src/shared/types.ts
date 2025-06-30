@@ -248,7 +248,10 @@ export type ServiceType = {
         surgePricing: {
             enabled: boolean;
             surgeMultiplier: number;
-            surgeHours: string[];
+            surgeHours: {
+                start: string;
+                end: string;
+            }[];
         };
         _id: string;
         name: string;
@@ -296,7 +299,10 @@ export type CreateServiceType = {
     surgePricing: {
         enabled: boolean;
         surgeMultiplier: number;
-        surgeHours: string[];
+        surgeHours: {
+            start: string;
+            end: string;
+        }[];
     };
     partnerCommissionRate: number;
 };

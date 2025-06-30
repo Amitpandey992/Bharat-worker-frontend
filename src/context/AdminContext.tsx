@@ -49,6 +49,11 @@ interface AdminContextType {
     fechCategories: () => Promise<void>;
     categoryData: CategoryType | null;
     createService: (data: CreateServiceType) => Promise<void>;
+    updateService: (
+        id: string,
+        data: CreateServiceType
+    ) => Promise<GenericResponse<any>>;
+    deleteService: (id: string) => Promise<void>;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
@@ -333,6 +338,43 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const updateService = async (id: string, data: CreateServiceType) => {
+        try {
+            const response = await AdminService.updateService(id, data);
+            setServiceData((prev) => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    services: prev.services.map((service) =>
+                        service._id === id ? response.data : service
+                    ),
+                };
+            });
+            return response;
+        } catch (error) {
+            console.error("error updating services", error);
+            throw error;
+        }
+    };
+
+    const deleteService = async (id: string) => {
+        try {
+            await AdminService.deleteService(id);
+            setServiceData((prev) => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    services: prev.services.filter(
+                        (service) => service._id !== id
+                    ),
+                };
+            });
+        } catch (error) {
+            console.error("error updating services", error);
+            throw error;
+        }
+    };
+
     return (
         <AdminContext.Provider
             value={{
@@ -357,6 +399,8 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                 fechCategories,
                 categoryData,
                 createService,
+                updateService,
+                deleteService,
             }}
         >
             {children}
