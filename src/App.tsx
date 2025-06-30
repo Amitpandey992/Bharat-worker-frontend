@@ -18,6 +18,12 @@ import PartnerJobList from "./pages/Partner/PartnerJobList";
 import Skills from "./pages/Partner/Skills";
 import AdminBookingList from "./pages/Admin/AdminBookingList";
 import Services from "./pages/Admin/Services";
+import PaymentHistory from "./pages/Admin/PaymentHistory";
+import PaymentApprove from "./pages/Admin/PaymentApprove";
+import PendingWithdrawal from "./pages/Admin/PendingWithdrawal";
+import PartnerTraining from "./pages/Partner/PartnerTraining";
+import SkillValidationQuiz from "./pages/Partner/SkillValidationQuiz";
+import PartnerPerformance from "./pages/Partner/PartnerPerformance";
 function App() {
     const { user, token } = useAuth();
     return (
@@ -82,6 +88,30 @@ function App() {
                                 path="/adminServices"
                                 element={<Services />}
                             />
+                            <Route
+                                path="/paymentHistory"
+                                element={<PaymentHistory />}
+                            />
+                               <Route
+                                path="/PaymentApprove"
+                                element={<PaymentApprove />}
+                            />
+                              <Route
+                                path="/pendingWithdrawal"
+                                element={<PendingWithdrawal />}
+                            />
+                              <Route
+                                    path="/partnerTraining"
+                                    element={<PartnerTraining/>}
+                                />
+                                 <Route
+                                    path="/skillValidationQuiz"
+                                    element={<SkillValidationQuiz/>}
+                                />
+                                  <Route
+                                    path="/partnerPerformance"
+                                    element={<PartnerPerformance/>}
+                                />
                             
                         </>
                     ) : user?.role === "customer" ? (
@@ -113,6 +143,10 @@ function App() {
                                 <Route
                                     path="/partnerJobList"
                                     element={<PartnerJobList />}
+                                />
+                                 <Route
+                                    path="/partnerTraining"
+                                    element={<PartnerTraining/>}
                                 />
                             </>
                         )
