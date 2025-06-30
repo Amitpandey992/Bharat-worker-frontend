@@ -31,6 +31,7 @@ const Services = () => {
         isLoading,
         categoryData,
         fechCategories,
+        createService,
     } = useAdmin();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingService, setEditingService] = useState<ServiceItem | null>(
@@ -65,7 +66,6 @@ const Services = () => {
         },
     });
 
-    console.log(serviceData);
     useEffect(() => {
         fechCategories();
         fetchServices();
@@ -116,7 +116,7 @@ const Services = () => {
         resetForm();
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (!formData.name || !formData.description || !formData.category) {
             toast({
                 title: "Please fill in all required fields",
@@ -124,9 +124,11 @@ const Services = () => {
             });
             return;
         }
+
         const selectedCategory = categoryData?.find(
             (cat) => cat._id === formData.category
         );
+
         if (!selectedCategory) {
             toast({
                 title: "Invalid category selection",
@@ -150,26 +152,25 @@ const Services = () => {
 
         if (editingService) {
         } else {
+            const respone = await createService(formData);
+            console.log(respone);
         }
 
         closeModal();
     };
 
-    const filteredServices =
-        serviceData?.services.filter((service) => {
-            if (!searchTerm.trim()) return true;
-            return (
-                service?.name
-                    ?.toLowerCase()
-                    ?.includes(searchTerm.toLowerCase()) ||
-                service?.category?.name
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-            );
-        }) || [];
-    console.log("searchTerm:", searchTerm);
-    console.log("serviceData.services:", serviceData?.services);
-    console.log("filteredServices:", filteredServices);
+    // const allServices: ServiceItem[] = serviceData?.services ?? [];
+
+    // const filteredServices: ServiceItem[] = allServices.filter((service) => {
+    //     if (!searchTerm.trim()) return true;
+    //     return (
+    //         service?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //         service?.category?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    //     );
+    // });
+    // console.log("searchTerm:", searchTerm);
+    console.log("serviceData:", serviceData);
+    // console.log("filteredServices:", filteredServices);
 
     const addSurgeHour = () => {
         setFormData({
@@ -268,7 +269,7 @@ const Services = () => {
                                         />
                                     </div>
                                     <div>
-                                        <Label className="block text-sm font-medium">
+                                        <Label className="block text-sm font-medium ">
                                             Category
                                         </Label>
                                         <Select
@@ -285,14 +286,24 @@ const Services = () => {
                                                 <SelectValue placeholder="Select a category" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {categoryData?.map(
-                                                    (category) => (
-                                                        <SelectItem
-                                                            key={category._id}
-                                                            value={category._id}
-                                                        >
-                                                            {category.name}
-                                                        </SelectItem>
+                                                {categoryData?.length === 0 ? (
+                                                    <p className="text-center text-gray-400">
+                                                        No category found...
+                                                    </p>
+                                                ) : (
+                                                    categoryData?.map(
+                                                        (category) => (
+                                                            <SelectItem
+                                                                key={
+                                                                    category._id
+                                                                }
+                                                                value={
+                                                                    category._id
+                                                                }
+                                                            >
+                                                                {category.name}
+                                                            </SelectItem>
+                                                        )
                                                     )
                                                 )}
                                             </SelectContent>
@@ -516,7 +527,7 @@ const Services = () => {
                                     </DialogClose>
                                     <Button
                                         type="button"
-                                        // onClick={handleSubmit}
+                                        onClick={handleSubmit}
                                         className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                                     >
                                         <Save className="w-4 h-4 mr-2" />
@@ -530,7 +541,7 @@ const Services = () => {
                     </Dialog>
                 </CardHeader>
                 <CardContent>
-                    <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                    {/* <div className="flex flex-col sm:flex-row gap-4 mb-6">
                         <div className="relative flex-1">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <Input
@@ -541,86 +552,98 @@ const Services = () => {
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
-                    </div>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                        {filteredServices?.map((service) => (
-                            <div
-                                key={service._id}
-                                className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h3 className="text-xl font-semibold text-gray-900 capitalize">
-                                            {service.name}
-                                        </h3>
-                                        <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
-                                            {service.category?.name}
+                    </div> */}
+                    {!serviceData || serviceData.services.length === 0 ? (
+                        <div className="flex h-[60vh] w-full items-center justify-center text-center">
+                            <p className="text-lg text-muted-foreground">
+                                No services found...
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                            {serviceData?.services.map((service) => (
+                                <div
+                                    key={service._id}
+                                    className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
+                                >
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h3 className="text-xl font-semibold text-gray-900 capitalize">
+                                                {service.name}
+                                            </h3>
+                                            <span className="inline-block px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full mt-2">
+                                                {service.category?.name}
+                                            </span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                variant="ghost"
+                                                onClick={() =>
+                                                    openModal(service)
+                                                }
+                                                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                            >
+                                                <Edit className="w-4 h-4" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                // onClick={() =>
+                                                //     deleteService(service._id)
+                                                // }
+                                                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    <p className="text-gray-600 mb-4 line-clamp-2">
+                                        {service.description}
+                                    </p>
+
+                                    <div className="mb-4">
+                                        <h4 className="text-sm font-medium text-gray-900 mb-2">
+                                            Pricing Tiers
+                                        </h4>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {service.pricingTiers?.map(
+                                                (tier) => (
+                                                    <div
+                                                        key={tier._id}
+                                                        className="text-center p-2 bg-gray-50 rounded-lg"
+                                                    >
+                                                        <div className="text-xs font-medium text-gray-600">
+                                                            {tier.name}
+                                                        </div>
+                                                        <div className="text-sm font-semibold text-gray-900">
+                                                            ₹{tier.price}
+                                                        </div>
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-between items-center text-sm">
+                                        <span className="text-gray-600">
+                                            Commission Rate
+                                        </span>
+                                        <span className="font-medium text-gray-900">
+                                            {service.partnerCommissionRate}%
                                         </span>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Button
-                                            variant="ghost"
-                                            onClick={() => openModal(service)}
-                                            className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                        >
-                                            <Edit className="w-4 h-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            // onClick={() =>
-                                            //     deleteService(service._id)
-                                            // }
-                                            className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
-                                    </div>
+
+                                    {service.surgePricing?.enabled && (
+                                        <div className="mt-2 flex items-center text-xs text-orange-600">
+                                            <Clock className="w-3 h-3 mr-1" />
+                                            Surge pricing enabled
+                                        </div>
+                                    )}
                                 </div>
-
-                                <p className="text-gray-600 mb-4 line-clamp-2">
-                                    {service.description}
-                                </p>
-
-                                <div className="mb-4">
-                                    <h4 className="text-sm font-medium text-gray-900 mb-2">
-                                        Pricing Tiers
-                                    </h4>
-                                    <div className="grid grid-cols-3 gap-2">
-                                        {service.pricingTiers?.map((tier) => (
-                                            <div
-                                                key={tier._id}
-                                                className="text-center p-2 bg-gray-50 rounded-lg"
-                                            >
-                                                <div className="text-xs font-medium text-gray-600">
-                                                    {tier.name}
-                                                </div>
-                                                <div className="text-sm font-semibold text-gray-900">
-                                                    ₹{tier.price}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="text-gray-600">
-                                        Commission Rate
-                                    </span>
-                                    <span className="font-medium text-gray-900">
-                                        {service.partnerCommissionRate}%
-                                    </span>
-                                </div>
-
-                                {service.surgePricing?.enabled && (
-                                    <div className="mt-2 flex items-center text-xs text-orange-600">
-                                        <Clock className="w-3 h-3 mr-1" />
-                                        Surge pricing enabled
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                    {filteredServices?.length === 0 && (
+                            ))}
+                        </div>
+                    )}
+                    {/* {filteredServices?.length === 0 && (
                         <div className="text-center py-12">
                             <div className="text-gray-400 text-lg mb-2">
                                 No services found
@@ -629,7 +652,7 @@ const Services = () => {
                                 Try adjusting your search or add a new service
                             </p>
                         </div>
-                    )}
+                    )} */}
                 </CardContent>
             </Card>
         </motion.div>

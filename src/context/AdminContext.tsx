@@ -280,19 +280,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         try {
             setIsLoading(true);
             const response = await AdminService.getServices();
-            setServiceData((prev) =>
-                prev
-                    ? { ...prev, services: [...prev.services, response.data] }
-                    : {
-                          services: [response.data],
-                          pagination: {
-                              currentPage: 1,
-                              pageSize: 10,
-                              totalPages: 1,
-                              totalItems: 1,
-                          },
-                      }
-            );
+            setServiceData(response.data);
         } catch (error) {
             console.error(error);
             throw error;
@@ -300,6 +288,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             setIsLoading(false);
         }
     };
+
     const fechCategories = async () => {
         try {
             const response = await AdminService.fetchAllCategory();
@@ -316,7 +305,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             const response = await AdminService.createService(data);
             setServiceData((prev) =>
                 prev
-                    ? { ...prev, services: [...prev.services, response.data] }
+                    ? {
+                          ...prev,
+                          services: [...prev.services, response.data],
+                          pagination: {
+                              ...prev.pagination,
+                              totalItems: prev.pagination.totalItems + 1,
+                              totalPages: Math.ceil(
+                                  (prev.pagination.totalItems + 1) /
+                                      prev.pagination.pageSize
+                              ),
+                          },
+                      }
                     : {
                           services: [response.data],
                           pagination: {

@@ -24,6 +24,7 @@ import PendingWithdrawal from "./pages/Admin/PendingWithdrawal";
 import PartnerTraining from "./pages/Partner/PartnerTraining";
 import SkillValidationQuiz from "./pages/Partner/SkillValidationQuiz";
 import PartnerPerformance from "./pages/Partner/PartnerPerformance";
+import Category from "./pages/Admin/Category";
 function App() {
     const { user, token } = useAuth();
     return (
@@ -76,43 +77,37 @@ function App() {
                                 path="/partnerlist/:id"
                                 element={<PartnerDetails />}
                             />
-                             <Route
-                                path="/skills"
-                                element={<Skills />}
-                            />
+                            <Route path="/skills" element={<Skills />} />
                             <Route
                                 path="/adminBookingList"
                                 element={<AdminBookingList />}
                             />
-                              <Route
-                                path="/adminServices"
-                                element={<Services />}
-                            />
+                            <Route path="/services" element={<Services />} />
+                            <Route path="/categories" element={<Category />} />
                             <Route
                                 path="/paymentHistory"
                                 element={<PaymentHistory />}
                             />
-                               <Route
+                            <Route
                                 path="/PaymentApprove"
                                 element={<PaymentApprove />}
                             />
-                              <Route
+                            <Route
                                 path="/pendingWithdrawal"
                                 element={<PendingWithdrawal />}
                             />
-                              <Route
-                                    path="/partnerTraining"
-                                    element={<PartnerTraining/>}
-                                />
-                                 <Route
-                                    path="/skillValidationQuiz"
-                                    element={<SkillValidationQuiz/>}
-                                />
-                                  <Route
-                                    path="/partnerPerformance"
-                                    element={<PartnerPerformance/>}
-                                />
-                            
+                            <Route
+                                path="/partnerTraining"
+                                element={<PartnerTraining />}
+                            />
+                            <Route
+                                path="/skillValidationQuiz"
+                                element={<SkillValidationQuiz />}
+                            />
+                            <Route
+                                path="/partnerPerformance"
+                                element={<PartnerPerformance />}
+                            />
                         </>
                     ) : user?.role === "customer" ? (
                         <>
@@ -144,9 +139,9 @@ function App() {
                                     path="/partnerJobList"
                                     element={<PartnerJobList />}
                                 />
-                                 <Route
+                                <Route
                                     path="/partnerTraining"
-                                    element={<PartnerTraining/>}
+                                    element={<PartnerTraining />}
                                 />
                             </>
                         )

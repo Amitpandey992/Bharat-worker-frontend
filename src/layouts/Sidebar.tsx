@@ -78,9 +78,23 @@ const Sidebar = ({ onClose }: SidebarProps) => {
         },
         {
             name: "Service Management",
-            href: "/adminservices",
+            href: "/services",
             icon: <Workflow className="h-4 w-4" />,
             role: "admin",
+            subItems: [
+                {
+                    name: "Services",
+                    href: "/services",
+                    icon: <Workflow className="h-4 w-4" />,
+                    role: "admin",
+                },
+                {
+                    name: "Categories",
+                    href: "/categories",
+                    icon: <Workflow className="h-4 w-4" />,
+                    role: "admin",
+                },
+            ],
         },
         {
             name: "Your Bookings",
