@@ -70,12 +70,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                 },
             ],
         },
-        {
-            name: "Booking List",
-            href: "/adminBookingList",
-            icon: <List className="h-4 w-4" />,
-            role: "admin",
-        },
+
         {
             name: "Service Management",
             href: "/services",
@@ -95,6 +90,12 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                     role: "admin",
                 },
             ],
+        },
+        {
+            name: "Booking List",
+            href: "/adminBookingList",
+            icon: <List className="h-4 w-4" />,
+            role: "admin",
         },
         {
             name: "Your Bookings",
@@ -203,11 +204,10 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                                 <button
                                     onClick={() => toggleMenu(item.name)}
                                     className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-sm font-medium
-                    ${
-                        isMenuOpen(item.name) || isMenuActive(item)
-                            ? "text-blue-300 bg-blue/10"
-                            : "text-gray-100 hover:bg-blue/5 hover:text-blue-300"
-                    }`}
+                    ${isMenuOpen(item.name) || isMenuActive(item)
+                                            ? "text-blue-300 bg-blue/10"
+                                            : "text-gray-100 hover:bg-blue/5 hover:text-blue-300"
+                                        }`}
                                 >
                                     <div className="flex items-center">
                                         {item.icon}
@@ -216,11 +216,10 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                                         </span>
                                     </div>
                                     <ChevronDown
-                                        className={`h-4 w-4 transition-transform duration-200 ${
-                                            isMenuOpen(item.name)
-                                                ? "rotate-180"
-                                                : ""
-                                        }`}
+                                        className={`h-4 w-4 transition-transform duration-200 ${isMenuOpen(item.name)
+                                            ? "rotate-180"
+                                            : ""
+                                            }`}
                                     />
                                 </button>
                                 {isMenuOpen(item.name) && (
@@ -229,11 +228,10 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                                             <Link
                                                 key={subItem.href}
                                                 to={subItem.href}
-                                                className={`flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium ${
-                                                    isActive(subItem.href)
-                                                        ? "bg-blue/10 text-blue-300"
-                                                        : "text-blue-100 hover:bg-blue/5 hover:text-blue-300"
-                                                }`}
+                                                className={`flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium ${isActive(subItem.href)
+                                                    ? "bg-blue/10 text-blue-300"
+                                                    : "text-blue-100 hover:bg-blue/5 hover:text-blue-300"
+                                                    }`}
                                             >
                                                 {subItem.icon}
                                                 <span>{subItem.name}</span>
@@ -256,11 +254,10 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                         ) : (
                             <Link
                                 to={item.href!}
-                                className={`flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium ${
-                                    isActive(item.href!)
-                                        ? "bg-blue/10 text-blue-300"
-                                        : "text-blue-100 hover:bg-blue/5 hover:text-blue-300"
-                                }`}
+                                className={`flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium ${isActive(item.href!)
+                                    ? "bg-blue/10 text-blue-300"
+                                    : "text-blue-100 hover:bg-blue/5 hover:text-blue-300"
+                                    }`}
                             >
                                 {item.icon}
                                 <span>{item.name}</span>
