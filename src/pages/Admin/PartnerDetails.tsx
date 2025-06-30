@@ -20,10 +20,10 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { ArrowLeftIcon } from "lucide-react";
-import { PartnerList } from "@/shared/types";
+import { PartnerListType } from "@/shared/types";
 import { useAdmin } from "@/context/AdminContext";
 
-type Partner = PartnerList["partners"][number];
+type Partner = PartnerListType["partners"][number];
 
 const PartnerDetails = () => {
     const { id } = useParams();

@@ -25,7 +25,7 @@ import {
     Settings2,
     X,
     Info,
-    Loader,
+    Loader2,
 } from "lucide-react";
 import { CustomerList } from "@/shared/types";
 import { useToast } from "@/components/ui/use-toast";
@@ -56,8 +56,8 @@ const CustomerListdata = () => {
         customerData,
         fetchCustomerList,
         isLoading,
-        addCustomer,
-        updateCustomer,
+        addUser,
+        updateUser,
         deactivateCustomer,
     } = useAdmin();
 
@@ -133,10 +133,7 @@ const CustomerListdata = () => {
                 return;
             }
             if (editData) {
-                const response = await updateCustomer(
-                    editData.user._id,
-                    formData
-                );
+                const response = await updateUser(editData.user._id, formData);
                 if (!response.success) {
                     toast({
                         title: "Error",
@@ -160,7 +157,7 @@ const CustomerListdata = () => {
                     });
                     return;
                 }
-                const response = await addCustomer(formData);
+                const response = await addUser(formData);
                 if (!response.success) {
                     toast({
                         title: "Error",
@@ -316,19 +313,22 @@ const CustomerListdata = () => {
                                             placeholder="Enter Email..."
                                         />
                                     </div>
-                                    <div className="mt-4 space-y-2">
-                                        <Label className="block text-sm font-medium capitalize">
-                                            Password
-                                        </Label>
-                                        <Input
-                                            name="password"
-                                            className="w-full border rounded p-2"
-                                            type="text"
-                                            value={formData.password}
-                                            onChange={handleInputChange}
-                                            placeholder="Enter password..."
-                                        />
-                                    </div>
+                                    {!editData && (
+                                        <div className="mt-4 space-y-2">
+                                            <Label className="block text-sm font-medium capitalize">
+                                                Password
+                                            </Label>
+                                            <Input
+                                                name="password"
+                                                className="w-full border rounded p-2"
+                                                type="text"
+                                                value={formData.password}
+                                                onChange={handleInputChange}
+                                                placeholder="Enter password..."
+                                            />
+                                        </div>
+                                    )}
+
                                     <div className="mt-4 space-y-2">
                                         <Label className="block text-sm font-medium capitalize">
                                             Mobile Number
@@ -394,7 +394,7 @@ const CustomerListdata = () => {
                                         disabled={isSubmitting}
                                     >
                                         {isSubmitting ? (
-                                            <Loader className="h-4 w-4 animate-spin " />
+                                            <Loader2 className="h-4 w-4 animate-spin " />
                                         ) : (
                                             <>
                                                 {editData ? "Update" : "Add"}{" "}
@@ -544,7 +544,7 @@ const CustomerListdata = () => {
                                                             className="flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted text-nowrap "
                                                             onClick={() =>
                                                                 navigate(
-                                                                    `/customerDetails/${userObj.user._id}`
+                                                                    `/customerlist/${userObj.user._id}`
                                                                 )
                                                             }
                                                         >

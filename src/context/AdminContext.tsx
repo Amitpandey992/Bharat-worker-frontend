@@ -2,10 +2,12 @@ import { AdminService } from "@/services/admin.service";
 import { PartnerService } from "@/services/partner.service";
 import {
     CustomerList,
-    PartnerList,
+    PartnerListType,
     GenericResponse,
-    CustomerBookingList,
     BookingListForACustomer,
+    ServiceType,
+    CategoryType,
+    CreateServiceType,
 } from "@/shared/types";
 
 import {
@@ -20,21 +22,18 @@ import {
 interface AdminContextType {
     customerData: CustomerList | null;
     fetchCustomerList: (currentPage: number, pageSize: number) => Promise<void>;
-    addCustomer: (payload: any) => Promise<GenericResponse<any>>;
-    updateCustomer: (
-        userId: string,
-        payload: any
-    ) => Promise<GenericResponse<any>>;
+    addUser: (payload: any) => Promise<GenericResponse<any>>;
+    updateUser: (userId: string, payload: any) => Promise<GenericResponse<any>>;
     deactivateCustomer: (userId: string) => Promise<void>;
     deactivatePartner: (userId: string) => Promise<void>;
     isLoading: boolean;
     setIsLoading: Dispatch<SetStateAction<boolean>>;
     getCustomer: (id: string) => Promise<any>;
     getPartner: (id: string) => Promise<any>;
-    partnerData: PartnerList | null;
-    setPartnerData: Dispatch<SetStateAction<PartnerList | null>>;
+    partnerData: PartnerListType | null;
+    setPartnerData: Dispatch<SetStateAction<PartnerListType | null>>;
     fetchPartnerList: (currentPage: number, pageSize: number) => Promise<void>;
-    updatePartner: (
+    updatePartnerSkill: (
         partnerId: string,
         skillId: string,
         payload: { skillName: string; yearsOfExperience: number }
@@ -45,17 +44,25 @@ interface AdminContextType {
         pageSize: number
     ) => Promise<void>;
     customerBookingData: BookingListForACustomer | null;
-    
+    fetchServices: () => Promise<void>;
+    serviceData: ServiceType | null;
+    fechCategories: () => Promise<void>;
+    categoryData: CategoryType | null;
+    createService: (data: CreateServiceType) => Promise<void>;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
 export function AdminProvider({ children }: { children: ReactNode }) {
     const [customerData, setCustomerData] = useState<CustomerList | null>(null);
-    const [partnerData, setPartnerData] = useState<PartnerList | null>(null);
+    const [partnerData, setPartnerData] = useState<PartnerListType | null>(
+        null
+    );
     const [isLoading, setIsLoading] = useState(false);
     const [customerBookingData, setCustomerBookingData] =
         useState<BookingListForACustomer | null>(null);
+    const [serviceData, setServiceData] = useState<ServiceType | null>(null);
+    const [categoryData, setCategoryData] = useState<CategoryType | null>(null);
 
     async function fetchCustomerList(currentPage: number, pageSize: number) {
         try {
@@ -73,25 +80,33 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    async function addCustomer(payload: any): Promise<GenericResponse<any>> {
+    async function addUser(payload: any): Promise<GenericResponse<any>> {
         try {
-            const response = await AdminService.addCustomer(payload);
+            const response = await AdminService.addUser(payload);
             if (!response.success) {
                 return response;
             }
-            const newCustomer = response.data;
+            const newUser = response.data;
             setCustomerData((prev) =>
                 prev
                     ? {
                           ...prev,
-                          customers: [...prev.customers, newCustomer],
+                          customers: [...prev.customers, newUser],
+                      }
+                    : prev
+            );
+            setPartnerData((prev) =>
+                prev
+                    ? {
+                          ...prev,
+                          partners: [...prev.partners, newUser],
                       }
                     : prev
             );
             return {
                 success: true,
-                data: newCustomer,
-                message: "Customer added successfully",
+                data: newUser,
+                message: "User added successfully",
             };
         } catch (error: any) {
             return {
@@ -102,31 +117,44 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    async function updateCustomer(
+    async function updateUser(
         userId: string,
         payload: any
     ): Promise<GenericResponse<any>> {
         try {
-            const response = await AdminService.updateCustomer(userId, payload);
+            const response = await AdminService.updateUser(userId, payload);
             if (!response.success) {
                 return response;
             }
-            const updatedCustomer = response.data;
+            const updatedUser = response.data;
             setCustomerData((prev) =>
                 prev
                     ? {
                           ...prev,
                           customers: prev.customers.map((customer) =>
                               customer?.user?._id === userId
-                                  ? { ...customer, user: updatedCustomer }
+                                  ? { ...customer, user: updatedUser }
                                   : customer
+                          ),
+                      }
+                    : prev
+            );
+
+            setPartnerData((prev) =>
+                prev
+                    ? {
+                          ...prev,
+                          partners: prev.partners.map((partner) =>
+                              partner.user._id === userId
+                                  ? { ...partner, user: updatedUser }
+                                  : partner
                           ),
                       }
                     : prev
             );
             return {
                 success: true,
-                data: updatedCustomer,
+                data: updatedUser,
                 message: "Customer updated successfully",
             };
         } catch (error: any) {
@@ -176,10 +204,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    const fetchPartnerList = async (page: number, limit: number) => {
+    const fetchPartnerList = async (currentPage: number, pageSize: number) => {
         try {
             setIsLoading(true);
-            const response = await PartnerService.partnerList(page, limit);
+            const response = await PartnerService.partnerList(
+                currentPage,
+                pageSize
+            );
             setPartnerData(response.data);
         } catch (err) {
             console.error("Error fetching partner list", err);
@@ -188,7 +219,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const updatePartner = async (
+    const updatePartnerSkill = async (
         partnerId: string,
         skillId: string,
         payload: { skillName: string; yearsOfExperience: number }
@@ -245,13 +276,70 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const fetchServices = async () => {
+        try {
+            setIsLoading(true);
+            const response = await AdminService.getServices();
+            setServiceData((prev) =>
+                prev
+                    ? { ...prev, services: [...prev.services, response.data] }
+                    : {
+                          services: [response.data],
+                          pagination: {
+                              currentPage: 1,
+                              pageSize: 10,
+                              totalPages: 1,
+                              totalItems: 1,
+                          },
+                      }
+            );
+        } catch (error) {
+            console.error(error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    const fechCategories = async () => {
+        try {
+            const response = await AdminService.fetchAllCategory();
+            console.log(response);
+            setCategoryData(response.data);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    };
+
+    const createService = async (data: CreateServiceType) => {
+        try {
+            const response = await AdminService.createService(data);
+            setServiceData((prev) =>
+                prev
+                    ? { ...prev, services: [...prev.services, response.data] }
+                    : {
+                          services: [response.data],
+                          pagination: {
+                              currentPage: 1,
+                              pageSize: 10,
+                              totalPages: 1,
+                              totalItems: 1,
+                          },
+                      }
+            );
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    };
+
     return (
         <AdminContext.Provider
             value={{
                 customerData,
                 fetchCustomerList,
-                addCustomer,
-                updateCustomer,
+                addUser,
+                updateUser,
                 deactivateCustomer,
                 deactivatePartner,
                 isLoading,
@@ -261,9 +349,14 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                 partnerData,
                 setPartnerData,
                 fetchPartnerList,
-                updatePartner,
+                updatePartnerSkill,
                 getBookingsByCustomer,
                 customerBookingData,
+                fetchServices,
+                serviceData,
+                fechCategories,
+                categoryData,
+                createService,
             }}
         >
             {children}

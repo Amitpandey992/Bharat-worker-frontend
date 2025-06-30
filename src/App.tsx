@@ -63,11 +63,11 @@ function App() {
                                 element={<PartnerList />}
                             />
                             <Route
-                                path="/customerDetails/:id"
+                                path="/customerlist/:id"
                                 element={<CustomerDetails />}
                             />
                             <Route
-                                path="/partnerDetails/:id"
+                                path="/partnerlist/:id"
                                 element={<PartnerDetails />}
                             />
                              <Route

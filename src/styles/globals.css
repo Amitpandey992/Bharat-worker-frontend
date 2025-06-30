@@ -131,3 +131,17 @@
     @apply bg-gradient-to-r from-gray-800 to-gray-900;
   }
 }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+input[type="number"] {
+  pointer-events: auto;
+}

@@ -19,6 +19,7 @@ import {
     Upload,
     ViewIcon,
     List,
+    Workflow,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -61,27 +62,25 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                     icon: <Users className="h-4 w-4" />,
                     role: "admin",
                 },
-
                 {
                     name: "Partner",
                     href: "/partnerlist",
                     icon: <Users className="h-4 w-4" />,
                     role: "admin",
                 },
-
-                 {
-                    name: "Booking List",
-                    href: "/adminBookingList",
-                    icon: <Users className="h-4 w-4" />,
-                    role: "admin",
-                },
-                 {
-                    name: "Services",
-                    href: "/adminservices",
-                    icon: <Users className="h-4 w-4" />,
-                    role: "admin",
-                },
             ],
+        },
+        {
+            name: "Booking List",
+            href: "/adminBookingList",
+            icon: <List className="h-4 w-4" />,
+            role: "admin",
+        },
+        {
+            name: "Service Management",
+            href: "/adminservices",
+            icon: <Workflow className="h-4 w-4" />,
+            role: "admin",
         },
         {
             name: "Your Bookings",
@@ -116,7 +115,10 @@ const Sidebar = ({ onClose }: SidebarProps) => {
     ];
 
     const isActive = (path: string) => {
-        return location.pathname === path;
+        return (
+            location.pathname === path ||
+            location.pathname.startsWith(path + "/")
+        );
     };
 
     const toggleMenu = (menuName: string) => {
@@ -128,7 +130,11 @@ const Sidebar = ({ onClose }: SidebarProps) => {
     };
 
     const isSubActive = (subPaths: SubMenuItem[]) => {
-        return subPaths.some((sub) => location.pathname.startsWith(sub.href));
+        return subPaths.some(
+            (sub) =>
+                location.pathname === sub.href ||
+                location.pathname.startsWith(sub.href + "/")
+        );
     };
 
     const isMenuActive = (item: MenuItem) => {
