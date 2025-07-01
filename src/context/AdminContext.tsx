@@ -8,6 +8,7 @@ import {
     ServiceType,
     CategoryType,
     CreateServiceType,
+    BookingList,
 } from "@/shared/types";
 
 import {
@@ -54,6 +55,9 @@ interface AdminContextType {
         data: CreateServiceType
     ) => Promise<GenericResponse<any>>;
     deleteService: (id: string) => Promise<void>;
+    fetchBookings: (currentPage: number, pageSize: number) => Promise<void>;
+    bookingData: BookingList | null;
+    setBookingData: Dispatch<SetStateAction<BookingList | null>>;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
@@ -68,7 +72,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         useState<BookingListForACustomer | null>(null);
     const [serviceData, setServiceData] = useState<ServiceType | null>(null);
     const [categoryData, setCategoryData] = useState<CategoryType | null>(null);
-
+    const [bookingData, setBookingData] = useState<BookingList | null>(null);
     async function fetchCustomerList(currentPage: number, pageSize: number) {
         try {
             setIsLoading(true);
@@ -375,6 +379,18 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const fetchBookings = async (currentPage: number, pageSize: number) => {
+
+        try {
+            const response = await AdminService.fetchBookings(currentPage, pageSize);
+            setBookingData(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error("error fetching bookings", error);
+            throw error;
+        }
+    };
+
     return (
         <AdminContext.Provider
             value={{
@@ -401,6 +417,9 @@ export function AdminProvider({ children }: { children: ReactNode }) {
                 createService,
                 updateService,
                 deleteService,
+                fetchBookings,
+                bookingData,
+                setBookingData,
             }}
         >
             {children}

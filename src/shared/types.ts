@@ -13,6 +13,7 @@ export type LoginResponse = {
     };
 };
 
+// customer
 export type CustomerType = {
     name: string;
     email: string;
@@ -59,6 +60,7 @@ export type AdminaddUser = {
     role: "Customer";
 };
 
+// partner
 export type DocumentType =
     | "aadharFront"
     | "aadharBack"
@@ -120,7 +122,8 @@ export type PartnerListType = {
     };
 };
 
-export type CustomerBookingList = {
+// bookings
+export type BookingList = {
     bookings: {
         _id: string;
         customer: {
@@ -157,7 +160,7 @@ export type CustomerBookingList = {
         totalItems: number;
         totalPages: number;
     };
-}[];
+}
 
 export type BookingListForACustomer = {
     bookings: {
@@ -243,6 +246,37 @@ export type BookingDataForPartner = {
     };
 };
 
+
+// category
+export type CategoryType = {
+    _id: string;
+    name: string;
+    description: string;
+    createdAt: string;
+    updatedAt: string;
+}[];
+
+// services
+export type CreateServiceType = {
+    name: string;
+    description: string;
+    category: string;
+    pricingTiers: {
+        name: string;
+        price: number;
+    }[];
+
+    surgePricing: {
+        enabled: boolean;
+        surgeMultiplier: number;
+        surgeHours: {
+            start: string;
+            end: string;
+        }[];
+    };
+    partnerCommissionRate: number;
+};
+
 export type ServiceType = {
     services: {
         surgePricing: {
@@ -277,32 +311,4 @@ export type ServiceType = {
         totalPages: number;
         totalItems: number;
     };
-};
-
-export type CategoryType = {
-    _id: string;
-    name: string;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
-}[];
-
-export type CreateServiceType = {
-    name: string;
-    description: string;
-    category: string;
-    pricingTiers: {
-        name: string;
-        price: number;
-    }[];
-
-    surgePricing: {
-        enabled: boolean;
-        surgeMultiplier: number;
-        surgeHours: {
-            start: string;
-            end: string;
-        }[];
-    };
-    partnerCommissionRate: number;
 };

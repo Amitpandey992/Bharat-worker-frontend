@@ -108,6 +108,23 @@ function App() {
                                 path="/partnerPerformance"
                                 element={<PartnerPerformance />}
                             />
+                            <Route
+                                path="/bookingList"
+                                element={<BookingList />}
+                            />
+                            <Route
+                                path="/create-booking"
+                                element={<CreateBooking />}
+                            />
+                            <Route
+                                path="/documentUpload"
+                                element={<DocumentUpload />}
+                            />
+                            <Route path="/view-jobs" element={<ViewJobs />} />
+                            <Route
+                                path="/partnerJobList"
+                                element={<PartnerJobList />}
+                            />
                         </>
                     ) : user?.role === "customer" ? (
                         <>
@@ -124,28 +141,23 @@ function App() {
                                 element={<CreateBooking />}
                             />
                         </>
-                    ) : (
-                        user?.role === "partner" && (
-                            <>
-                                <Route
-                                    path="/documentUpload"
-                                    element={<DocumentUpload />}
-                                />
-                                <Route
-                                    path="/view-jobs"
-                                    element={<ViewJobs />}
-                                />
-                                <Route
-                                    path="/partnerJobList"
-                                    element={<PartnerJobList />}
-                                />
-                                <Route
-                                    path="/partnerTraining"
-                                    element={<PartnerTraining />}
-                                />
-                            </>
-                        )
-                    )}
+                    ) : user?.role === "partner" ? (
+                        <>
+                            <Route
+                                path="/documentUpload"
+                                element={<DocumentUpload />}
+                            />
+                            <Route path="/view-jobs" element={<ViewJobs />} />
+                            <Route
+                                path="/partnerJobList"
+                                element={<PartnerJobList />}
+                            />
+                            <Route
+                                path="/partnerTraining"
+                                element={<PartnerTraining />}
+                            />
+                        </>
+                    ) : null}
                 </Route>
 
                 <Route path="*" element={<NotFound />} />

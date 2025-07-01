@@ -92,11 +92,44 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             ],
         },
         {
-            name: "Booking List",
+            name: 'Booking Management',
             href: "/adminBookingList",
             icon: <List className="h-4 w-4" />,
             role: "admin",
+            subItems: [
+                {
+                    name: "Booking List",
+                    href: "/adminBookingList",
+                    icon: <List className="h-4 w-4" />,
+                    role: "admin",
+                },
+                {
+                    name: "Customer bookings",
+                    href: "/bookingList",
+                    icon: <FilePlus className="h-4 w-4" />,
+                    role: "admin",
+                },
+                {
+                    name: "Partner jobs",
+                    href: "/partnerJobList",
+                    icon: <List className="h-4 w-4" />,
+                    role: "admin",
+                },
+                {
+                    name: "Create Booking",
+                    href: "/create-booking",
+                    icon: <FilePlus className="h-4 w-4" />,
+                    role: "admin",
+                },
+                {
+                    name: "View jobs",
+                    href: "/view-jobs",
+                    icon: <EyeIcon className="h-4 w-4" />,
+                    role: "admin",
+                },
+            ]
         },
+        
         {
             name: "Your Bookings",
             href: "/bookingList",

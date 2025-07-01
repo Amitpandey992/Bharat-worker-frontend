@@ -97,6 +97,8 @@ function CreateBooking() {
         }
     };
 
+    console.log(services);
+
     // const handleUseMyLocation = () => {
     //     if (addressViaAutoComplete) {
     //         toast({
@@ -216,7 +218,7 @@ function CreateBooking() {
                                 <SelectValue placeholder="Select a service" />
                             </SelectTrigger>
                             <SelectContent>
-                                {services.map((service) => (
+                                {services?.services?.map((service) => (
                                     <SelectItem
                                         key={service._id}
                                         value={service._id}

@@ -150,6 +150,7 @@ export class AdminService {
         }
     }
 
+    //services
     static async getServices(): Promise<GenericResponse<any>> {
         try {
             const respones = await axiosInstance.get("/services", {
@@ -238,7 +239,7 @@ export class AdminService {
             };
         }
     }
-
+    // category
     static async fetchAllCategory(): Promise<GenericResponse<any>> {
         try {
             const response = await axiosInstance.get("/categories", {
@@ -256,6 +257,34 @@ export class AdminService {
                 data: null,
                 message:
                     error.respones?.data.message || "Error fetching categories",
+            };
+        }
+    }
+
+    // bookings
+    static async fetchBookings(
+        currentPage: number,
+        pageSize: number
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.get(
+                `/booking?currentPage=${currentPage}&pageSize=${pageSize}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${JSON.parse(
+                            localStorage.getItem("token") || "''"
+                        )}`,
+                    },
+                }
+            );
+            return response.data;
+        } catch (error: unknown) {
+            console.error(error);
+            const err = error as any;
+            return {
+                success: false,
+                data: null,
+                message: err.respones?.data.message,
             };
         }
     }

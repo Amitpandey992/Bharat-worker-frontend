@@ -14,7 +14,6 @@ import { useCustomer } from "@/context/CustomerContext";
 import { useAuth } from "@/context/AuthContext";
 
 const BookingList = () => {
-  
     const { getAllBookingByACustomer, isLoading, customerBookingList } =
         useCustomer();
     const { user } = useAuth();
@@ -107,8 +106,12 @@ const BookingList = () => {
                                                 <TableCell>
                                                     <div className="flex items-center space-x-3">
                                                         <span className="font-medium">
-                                                            {booking?.partner
-                                                                ? booking?.partner
+                                                            {booking?.partner &&
+                                                            typeof booking.partner ===
+                                                                "object"
+                                                                ? booking
+                                                                      .partner
+                                                                      .name
                                                                 : "No partner assigned"}
                                                         </span>
                                                     </div>

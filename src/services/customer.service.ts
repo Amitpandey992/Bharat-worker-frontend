@@ -29,7 +29,7 @@ export class CustomerService {
 
     static async fetchServices(): Promise<GenericResponse<any>> {
         try {
-            const response = await axiosInstance.get("/service/getAllService", {
+            const response = await axiosInstance.get("/services", {
                 headers: {
                     Authorization: `Bearer ${JSON.parse(
                         localStorage.getItem("token") || "''"

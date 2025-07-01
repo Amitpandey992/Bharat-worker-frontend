@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import {
@@ -15,7 +15,7 @@ import {
     CardTitle,
 } from "../../components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Settings2, X, Info } from "lucide-react";
+import { X } from "lucide-react";
 import {
     Table,
     TableBody,
@@ -25,18 +25,49 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useAdmin } from "@/context/AdminContext";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+import socket from "@/lib/socket";
+import { useToast } from "@/components/ui/use-toast";
+import { BookingList } from "@/shared/types";
 
 const AdminBookinList = () => {
+    const { toast } = useToast();
     const { isLoading } = useAdmin();
     const [isRescheduleOpen, setIsRescheduleOpen] = useState(false);
     const [isAssignOpen, setAssignOpen] = useState(false);
     const [isCancelOpen, setIsCancelOpen] = useState(false);
+    const [paginationData, setPaginationData] = useState({
+        pageSize: 10,
+        currentPage: 1,
+    });
+    const { bookingData, fetchBookings, setBookingData } = useAdmin();
+
+    useEffect(() => {
+        // 👂 Listen for live booking updates
+        socket.on("newBookingCreated", (newBooking) => {
+            toast({
+                title: "New booking received!",
+                variant: "default",
+            });
+            setBookingData((prev) => {
+                if (!prev) return null;
+                return {
+                    ...prev,
+                    bookings: [newBooking, ...prev.bookings],
+                };
+            });
+        });
+
+        // Cleanup listener
+        return () => {
+            socket.off("newBookingCreated");
+        };
+    }, []);
+
+    useEffect(() => {
+        fetchBookings(paginationData.currentPage, paginationData.pageSize);
+    }, [paginationData.currentPage, paginationData.pageSize]);
+
+    console.log(bookingData);
 
     if (isLoading) {
         return (
@@ -64,7 +95,21 @@ const AdminBookinList = () => {
                 </CardHeader>
                 <CardContent>
                     <div className="overflow-x-auto">
-                        <Table>
+                        <Table
+                            pagination={{
+                                pageSize: paginationData.pageSize,
+                                currentPage: paginationData.currentPage,
+                                onPageChange: (page) =>
+                                    setPaginationData((prev) => ({
+                                        ...prev,
+                                        currentPage: page,
+                                    })),
+                                totalItems:
+                                    bookingData?.pagination.totalItems || 0,
+                                totalPages:
+                                    bookingData?.pagination.totalPages || 0,
+                            }}
+                        >
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>Partner Name</TableHead>
@@ -84,78 +129,67 @@ const AdminBookinList = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                <TableRow>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-                                    <TableCell></TableCell>
-
-                                    <TableCell className="text-end">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8"
-                                                >
-                                                    <MoreHorizontal className="h-4 w-4" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-
-                                            <DropdownMenuContent
-                                                align="end"
-                                                className="w-[180px] rounded-md border bg-white p-2 shadow-md z-[999]"
-                                            >
-                                                <DropdownMenuItem
-                                                    onClick={() =>
-                                                        setAssignOpen(true)
-                                                    }
-                                                    className="flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted text-nowrap"
-                                                >
-                                                    <Settings2 className="mr-2 h-4 w-4" />
-                                                    Assign
-                                                </DropdownMenuItem>
-
-                                                <DropdownMenuItem
-                                                    onClick={() =>
-                                                        setIsRescheduleOpen(
-                                                            true
-                                                        )
-                                                    }
-                                                    className="flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted text-nowrap"
-                                                >
-                                                    <Settings2 className="mr-2 h-4 w-4" />
-                                                    Reschedule
-                                                </DropdownMenuItem>
-
-                                                <DropdownMenuItem
-                                                    onClick={() =>
-                                                        setIsCancelOpen(true)
-                                                    }
-                                                    className="flex cursor-pointer items-center rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted text-nowrap"
-                                                >
-                                                    <Info className="mr-2 h-4 w-4" />
-                                                    Cancel
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </TableCell>
-                                </TableRow>
-
-                                <TableRow>
-                                    <TableCell
-                                        colSpan={10}
-                                        className="text-center py-8 text-muted-foreground"
-                                    >
-                                        No booking history available...
-                                    </TableCell>
-                                </TableRow>
+                                {bookingData?.bookings?.length &&
+                                bookingData?.bookings?.length > 0 ? (
+                                    bookingData?.bookings.map(
+                                        (
+                                            booking: BookingList["bookings"][0]
+                                        ) => (
+                                            <TableRow key={booking._id}>
+                                                <TableCell>
+                                                    {booking.partner?.name ||
+                                                        "N/A"}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.customer?.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.partner?.email ||
+                                                        "N/A"}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.customer?.email}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.service?.name}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.status}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.timeSlot
+                                                        ? new Date(
+                                                              booking.timeSlot
+                                                          ).toLocaleString(
+                                                              "en-IN"
+                                                          )
+                                                        : ""}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.location}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.totalAmount}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {booking.paymentStatus}
+                                                </TableCell>
+                                                <TableCell className="text-end">
+                                                    {/* Keep your actions here */}
+                                                </TableCell>
+                                            </TableRow>
+                                        )
+                                    )
+                                ) : (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={11}
+                                            className="text-center py-8 text-muted-foreground"
+                                        >
+                                            No booking history available...
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                         <Dialog

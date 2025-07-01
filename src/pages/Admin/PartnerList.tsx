@@ -466,40 +466,40 @@ const PartnerList: React.FC = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {partnerData?.partners.map((partner: any) => (
+                                {partnerData?.partners?.map((partner: any) => (
                                     <TableRow key={partner._id}>
                                         <TableCell>
                                             <div className="flex items-center space-x-3">
                                                 <Avatar>
                                                     <AvatarFallback className="bg-blue-500 text-white">
-                                                        {partner.user.name
+                                                        {partner.user?.name
                                                             .slice(0, 2)
                                                             .toUpperCase()}
                                                     </AvatarFallback>
                                                 </Avatar>
                                                 <span className="font-medium">
-                                                    {partner.user.name}
+                                                    {partner.user?.name}
                                                 </span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            {partner.user.email}
+                                            {partner.user?.email}
                                         </TableCell>
                                         <TableCell>
-                                            {partner.user.phone}
+                                            {partner.user?.phone}
                                         </TableCell>
                                         <TableCell>
-                                            {partner.user.role}
+                                            {partner.user?.role}
                                         </TableCell>
                                         <TableCell>
                                             <span
                                                 className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                                    partner.user.isActive
+                                                    partner.user?.isActive
                                                         ? "bg-green-100 text-green-700"
                                                         : "bg-red-100 text-red-700"
                                                 }`}
                                             >
-                                                {partner.user.isActive
+                                                {partner.user?.isActive
                                                     ? "Active"
                                                     : "In Active"}
                                             </span>

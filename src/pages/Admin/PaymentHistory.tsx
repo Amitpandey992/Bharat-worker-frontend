@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
     Card,
@@ -20,7 +20,6 @@ import { PaginatedResponse } from "@/shared/interfaces";
 const PaymentHistory = () => {
     const { isLoading } = useAdmin();
 
-
     const [paginationData, setPaginationData] = useState<PaginatedResponse>({
         currentPage: 1,
         pageSize: 10,
@@ -28,15 +27,14 @@ const PaymentHistory = () => {
         totalPages: 0,
     });
 
-
-
-
     if (isLoading) {
         return (
             <div className="flex h-full items-center justify-center">
                 <div className="flex flex-col items-center space-y-4">
                     <div className="h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                    <p className="text-lg text-muted-foreground">Loading services...</p>
+                    <p className="text-lg text-muted-foreground">
+                        Loading services...
+                    </p>
                 </div>
             </div>
         );

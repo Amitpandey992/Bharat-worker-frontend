@@ -1,5 +1,5 @@
 import { CustomerService } from "@/services/customer.service";
-import { BookingListForACustomer } from "@/shared/types";
+import { BookingList, ServiceType } from "@/shared/types";
 import { createContext, useContext, ReactNode, useState } from "react";
 
 interface CustomerContextType {
@@ -10,14 +10,14 @@ interface CustomerContextType {
         location: string;
         totalAmount: number;
     }) => Promise<void>;
-    services: any[];
+    services: ServiceType | null;
     fetchAllServices: () => Promise<void>;
     getAllBookingByACustomer: (
         id: string,
         currentPage: number,
         pageSize: number
     ) => Promise<void>;
-    customerBookingList: BookingListForACustomer | null;
+    customerBookingList: BookingList | null;
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(
@@ -26,9 +26,9 @@ const CustomerContext = createContext<CustomerContextType | undefined>(
 
 export function CustomerProvider({ children }: { children: ReactNode }) {
     const [isLoading, setIsLoading] = useState(false);
-    const [services, setServices] = useState([]);
+    const [services, setServices] = useState<ServiceType | null>(null);
     const [customerBookingList, setCustomerBookingList] =
-        useState<BookingListForACustomer | null>(null);
+        useState<BookingList | null>(null);
 
     const createNewBooking = async (data: {
         service: string;

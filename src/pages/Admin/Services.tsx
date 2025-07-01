@@ -68,7 +68,9 @@ const Services = () => {
         },
     });
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const [serviceToDelete, setServiceToDelete] = useState<ServiceItem | null>(null);
+    const [serviceToDelete, setServiceToDelete] = useState<ServiceItem | null>(
+        null
+    );
 
     useEffect(() => {
         fechCategories();
@@ -285,7 +287,7 @@ const Services = () => {
                                         />
                                     </div>
                                     <div>
-                                        <Label className="block text-sm font-medium ">
+                                        <Label className="block text-sm font-medium mb-2">
                                             Category
                                         </Label>
                                         <Select
@@ -624,13 +626,22 @@ const Services = () => {
                                             >
                                                 <Edit className="w-4 h-4" />
                                             </Button>
-                                            <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+                                            <Dialog
+                                                open={deleteDialogOpen}
+                                                onOpenChange={
+                                                    setDeleteDialogOpen
+                                                }
+                                            >
                                                 <DialogTrigger asChild>
                                                     <Button
                                                         variant="ghost"
                                                         onClick={() => {
-                                                            setServiceToDelete(service);
-                                                            setDeleteDialogOpen(true);
+                                                            setServiceToDelete(
+                                                                service
+                                                            );
+                                                            setDeleteDialogOpen(
+                                                                true
+                                                            );
                                                         }}
                                                         className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                                                     >
@@ -639,27 +650,52 @@ const Services = () => {
                                                 </DialogTrigger>
                                                 <DialogContent>
                                                     <DialogHeader>
-                                                        <DialogTitle>Delete Service</DialogTitle>
+                                                        <DialogTitle>
+                                                            Delete Service
+                                                        </DialogTitle>
                                                     </DialogHeader>
-                                                    <p>Are you sure you want to delete <b>{serviceToDelete?.name}</b>?</p>
+                                                    <p>
+                                                        Are you sure you want to
+                                                        delete{" "}
+                                                        <b>
+                                                            {
+                                                                serviceToDelete?.name
+                                                            }
+                                                        </b>
+                                                        ?
+                                                    </p>
                                                     <DialogFooter>
                                                         <Button
                                                             variant="outline"
-                                                            onClick={() => setDeleteDialogOpen(false)}
+                                                            onClick={() =>
+                                                                setDeleteDialogOpen(
+                                                                    false
+                                                                )
+                                                            }
                                                         >
                                                             Cancel
                                                         </Button>
                                                         <Button
                                                             variant="destructive"
                                                             onClick={async () => {
-                                                                if (serviceToDelete) {
-                                                                    await deleteService(serviceToDelete._id);
-                                                                    setDeleteDialogOpen(false);
-                                                                    setServiceToDelete(null);
+                                                                if (
+                                                                    serviceToDelete
+                                                                ) {
+                                                                    await deleteService(
+                                                                        serviceToDelete._id
+                                                                    );
+                                                                    setDeleteDialogOpen(
+                                                                        false
+                                                                    );
+                                                                    setServiceToDelete(
+                                                                        null
+                                                                    );
                                                                     toast({
-                                                                        variant: "default",
+                                                                        variant:
+                                                                            "default",
                                                                         title: "Deleted!",
-                                                                        description: "Service deleted successfully.",
+                                                                        description:
+                                                                            "Service deleted successfully.",
                                                                     });
                                                                 }
                                                             }}
