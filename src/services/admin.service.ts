@@ -1,5 +1,5 @@
 import { axiosInstance } from "@/shared/interceptors";
-import { CreateServiceType, GenericResponse } from "@/shared/types";
+import { CategoryType, CreateServiceType, GenericResponse } from "@/shared/types";
 
 export class AdminService {
     static async customerList(
@@ -285,6 +285,74 @@ export class AdminService {
                 success: false,
                 data: null,
                 message: err.respones?.data.message,
+            }
+        }
+    }
+
+    static async createCategory(
+        data: CategoryType
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.post("/categories", data, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(
+                        localStorage.getItem("token") || "''"
+                    )}`,
+                },
+            });
+            return response.data;
+        } catch (error: any) {
+            console.error("Error creating categories ", error);
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error creating category",
+            };
+        }
+    }
+
+    static async updateCategory(
+        id: string,
+        data: CategoryType
+    ): Promise<GenericResponse<any>> {
+        try {
+            const response = await axiosInstance.put(`/categories/${id}`, data, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(
+                        localStorage.getItem("token") || "''"
+                    )}`,
+                },
+            });
+            return response.data;
+        } catch (error: any) {
+            console.error("Error updating category", error);
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error updating category",
+            };
+        }
+    }
+
+    static async deleteCategory(id: string): Promise<GenericResponse<any>> {
+        try {
+            const respones = await axiosInstance.delete(`/categories/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${JSON.parse(
+                        localStorage.getItem("token") || "''"
+                    )}`,
+                },
+            });
+            return respones.data;
+        } catch (error: any) {
+            console.error("Error deleting category", error);
+            return {
+                success: false,
+                data: null,
+                message:
+                    error.respones?.data.message || "Error deleting category",
             };
         }
     }

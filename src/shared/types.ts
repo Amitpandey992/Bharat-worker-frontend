@@ -103,6 +103,7 @@ export type PartnerListType = {
             phone: number;
             isActive: boolean;
         };
+        aadharFront: string | null;
         aadharBack: string | null;
         panFront: string | null;
         panBack: string | null;
@@ -246,16 +247,6 @@ export type BookingDataForPartner = {
     };
 };
 
-
-// category
-export type CategoryType = {
-    _id: string;
-    name: string;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
-}[];
-
 // services
 export type CreateServiceType = {
     name: string;
@@ -312,3 +303,21 @@ export type ServiceType = {
         totalItems: number;
     };
 };
+
+export type CategoryType = {
+    category: {
+        _id: string;
+        name: string;
+        data: string
+        description: string;
+        createdAt: string;
+        updatedAt: string;
+    }[]
+    pagination: {
+        currentPage: number,
+        pageSize: number,
+        totalItems: number,
+        totalPages: number
+    }
+}[];
+

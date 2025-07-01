@@ -85,6 +85,11 @@ const PartnerDetails = () => {
                                     <TableHead>Email</TableHead>
                                     <TableHead>Mobile No.</TableHead>
                                     <TableHead>Skills</TableHead>
+                                    <TableHead>AadharFront</TableHead>
+                                    <TableHead>AadharBack</TableHead>
+                                    <TableHead>PanFront</TableHead>
+                                    <TableHead>PanBack</TableHead>
+                                    <TableHead>ExperienceCertificates</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -92,6 +97,7 @@ const PartnerDetails = () => {
                                     <TableCell>{partner.user.name}</TableCell>
                                     <TableCell>{partner.user.email}</TableCell>
                                     <TableCell>{partner.user.phone}</TableCell>
+
 
                                     {/* {partner.skills?.length ? (
                                             <ul className="list-disc list-inside space-y-1">
@@ -157,6 +163,65 @@ const PartnerDetails = () => {
                                             </DropdownMenu.Root>
                                         ) : (
                                             <span className="text-muted-foreground">No skills</span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {partner.aadharFront ? (
+                                            <img
+                                                src={partner.aadharFront}
+                                                alt="Aadhar Front"
+                                                className="h-16 w-24 object-cover rounded"
+                                            />
+                                        ) : (
+                                            <span className="text-muted-foreground">No Aadhar data</span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {partner.aadharBack ? (
+                                            <img
+                                                src={partner.aadharBack}
+                                                alt="Aadhar Back"
+                                                className="h-16 w-24 object-cover rounded"
+                                            />
+                                        ) : (
+                                            <span className="text-muted-foreground">No Aadhar data</span>
+                                        )}
+                                    </TableCell>
+
+                                    <TableCell>
+                                        {partner.panFront ? (
+                                            <img
+                                                src={partner.panFront}
+                                                alt="panFront Back"
+                                                className="h-16 w-24 object-cover rounded"
+                                            />
+                                        ) : (
+                                            <span className="text-muted-foreground">No Pan data</span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {partner.panBack ? (
+                                            <img
+                                                src={partner.panBack}
+                                                alt="panBack Back"
+                                                className="h-16 w-24 object-cover rounded"
+                                            />
+                                        ) : (
+                                            <span className="text-muted-foreground">No Pan data</span>
+                                        )}
+                                    </TableCell>
+                                    <TableCell className="space-x-2 flex flex-wrap">
+                                        {partner.experienceCertificates && partner.experienceCertificates.length > 0 ? (
+                                            partner.experienceCertificates.map((url: string, index: number) => (
+                                                <img
+                                                    key={index}
+                                                    src={url}
+                                                    alt={`Certificate ${index + 1}`}
+                                                    className="h-16 w-24 object-cover rounded"
+                                                />
+                                            ))
+                                        ) : (
+                                            <span className="text-muted-foreground">No Experience Certificates</span>
                                         )}
                                     </TableCell>
 

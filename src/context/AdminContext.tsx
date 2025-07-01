@@ -99,17 +99,17 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             setCustomerData((prev) =>
                 prev
                     ? {
-                          ...prev,
-                          customers: [...prev.customers, newUser],
-                      }
+                        ...prev,
+                        customers: [...prev.customers, newUser],
+                    }
                     : prev
             );
             setPartnerData((prev) =>
                 prev
                     ? {
-                          ...prev,
-                          partners: [...prev.partners, newUser],
-                      }
+                        ...prev,
+                        partners: [...prev.partners, newUser],
+                    }
                     : prev
             );
             return {
@@ -139,26 +139,26 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             setCustomerData((prev) =>
                 prev
                     ? {
-                          ...prev,
-                          customers: prev.customers.map((customer) =>
-                              customer?.user?._id === userId
-                                  ? { ...customer, user: updatedUser }
-                                  : customer
-                          ),
-                      }
+                        ...prev,
+                        customers: prev.customers.map((customer) =>
+                            customer?.user?._id === userId
+                                ? { ...customer, user: updatedUser }
+                                : customer
+                        ),
+                    }
                     : prev
             );
 
             setPartnerData((prev) =>
                 prev
                     ? {
-                          ...prev,
-                          partners: prev.partners.map((partner) =>
-                              partner.user._id === userId
-                                  ? { ...partner, user: updatedUser }
-                                  : partner
-                          ),
-                      }
+                        ...prev,
+                        partners: prev.partners.map((partner) =>
+                            partner.user._id === userId
+                                ? { ...partner, user: updatedUser }
+                                : partner
+                        ),
+                    }
                     : prev
             );
             return {
@@ -182,13 +182,13 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             setCustomerData((prev) =>
                 prev
                     ? {
-                          ...prev,
-                          customers: prev.customers.map((customer) =>
-                              customer.user._id === userId
-                                  ? { ...customer, user: updatedCustomer }
-                                  : customer
-                          ),
-                      }
+                        ...prev,
+                        customers: prev.customers.map((customer) =>
+                            customer.user._id === userId
+                                ? { ...customer, user: updatedCustomer }
+                                : customer
+                        ),
+                    }
                     : prev
             );
         } catch (error: any) {
@@ -298,16 +298,7 @@ export function AdminProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const fechCategories = async () => {
-        try {
-            const response = await AdminService.fetchAllCategory();
-            console.log(response);
-            setCategoryData(response.data);
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    };
+
 
     const createService = async (data: CreateServiceType) => {
         try {
@@ -315,26 +306,26 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             setServiceData((prev) =>
                 prev
                     ? {
-                          ...prev,
-                          services: [...prev.services, response.data],
-                          pagination: {
-                              ...prev.pagination,
-                              totalItems: prev.pagination.totalItems + 1,
-                              totalPages: Math.ceil(
-                                  (prev.pagination.totalItems + 1) /
-                                      prev.pagination.pageSize
-                              ),
-                          },
-                      }
+                        ...prev,
+                        services: [...prev.services, response.data],
+                        pagination: {
+                            ...prev.pagination,
+                            totalItems: prev.pagination.totalItems + 1,
+                            totalPages: Math.ceil(
+                                (prev.pagination.totalItems + 1) /
+                                prev.pagination.pageSize
+                            ),
+                        },
+                    }
                     : {
-                          services: [response.data],
-                          pagination: {
-                              currentPage: 1,
-                              pageSize: 10,
-                              totalPages: 1,
-                              totalItems: 1,
-                          },
-                      }
+                        services: [response.data],
+                        pagination: {
+                            currentPage: 1,
+                            pageSize: 10,
+                            totalPages: 1,
+                            totalItems: 1,
+                        },
+                    }
             );
         } catch (error) {
             console.error(error);
@@ -378,6 +369,74 @@ export function AdminProvider({ children }: { children: ReactNode }) {
             throw error;
         }
     };
+    const fechCategories = async () => {
+        try {
+            const response = await AdminService.fetchAllCategory();
+            console.log(response);
+            setCategoryData(response.data);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    };
+
+    // async function createCategory(payload: any): Promise<GenericResponse<any>> {
+    //     try {
+    //         const response = await AdminService.createCategory(payload);
+    //         if (!response.success) {
+    //             return response;
+    //         }
+    //         const newCatogry = response.data;
+    //         setCategoryData(response.data);
+
+    //         return {
+    //             success: true,
+    //             data: newCatogry,
+    //             message: "Catogry added successfully",
+    //         };
+    //     } catch (error: any) {
+    //         return {
+    //             success: false,
+    //             data: null,
+    //             message: error?.response?.data?.message || error.message,
+    //         };
+    //     }
+    // };
+
+    // async function updateCategory(id: string, payload: any): Promise<GenericResponse<any>> {
+    //     try {
+    //         const response = await AdminService.updateCategory(id, payload);
+    //         setCategoryData((prev) => {
+    //             if (!prev) return null;
+    //             return {
+    //                 ...prev,
+    //                 category: 
+    //             };
+    //         });
+    //         return response;
+    //     } catch (error) {
+    //         console.error("error updating category", error);
+    //         throw error;
+    //     }
+    // };
+
+    // const deleteCategory = async (id: string) => {
+    //     try {
+    //         await AdminService.deleteCategory(id);
+    //         setCategoryData((prev) => {
+    //             if (!prev) return null;
+    //             return {
+    //                 ...prev,
+    //                 category: prev.category.filter(
+    //                     (category) => category._id !== id
+    //                 ),
+    //             };
+    //         });
+    //     } catch (error) {
+    //         console.error("error updating category", error);
+    //         throw error;
+    //     }
+    // };
 
     const fetchBookings = async (currentPage: number, pageSize: number) => {
 
